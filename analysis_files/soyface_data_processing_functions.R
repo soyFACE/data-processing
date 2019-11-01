@@ -2,7 +2,7 @@
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
-  # Dummy variables
+  #  Dummy variables
   source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
   
   myfiles <- list.files(source_file_location
