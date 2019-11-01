@@ -1,6 +1,4 @@
 # SoyFACE Data Processing Functions
-# Test update -JAM
-# JAM line 3
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
@@ -17,10 +15,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
                      ,stringsAsFactors = FALSE
                      ,colClasses = 'character'
   )
-# JAM line 21  
-  ### this is a random text   
-  
-  #CHECK CHECK 
+
   record_number_estimate <- length(myfiles)*1440*1.1 # Estimate how big the total data frame will need to be based on how many files will be read, times the minutes in a day with 10% leeway.
   
   sfdata[1:record_number_estimate,] <- NA
@@ -121,7 +116,7 @@ check_sfdata_dates <- function(sfdata){
 
 convert_sfdata_variable_types <- function(my_sfdata){
   
-  # check if conversion is valid
+  # TO-DO check if conversion is valid
   
   my_sfdata$datetime <- as.POSIXct(paste(my_sfdata$dt, my_sfdata$time)
                                    ,tz = 'GMT'
@@ -154,5 +149,5 @@ calc_sf_data_time_within_target
 
 make_face_stats
 
-#plotting functions
+# TO-DO add plotting functions
 
