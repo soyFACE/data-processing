@@ -1,6 +1,7 @@
 # SoyFACE Data Processing Functions
 # Test update -JAM
-# I've changed line 3
+# test Yuxi 
+
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
@@ -18,7 +19,8 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   )
   
   ### this is a random text   
-  # my line 21
+  
+  #CHECK CHECK 
   record_number_estimate <- length(myfiles)*1440*1.1 # Estimate how big the total data frame will need to be based on how many files will be read, times the minutes in a day with 10% leeway.
   
   sfdata[1:record_number_estimate,] <- NA
