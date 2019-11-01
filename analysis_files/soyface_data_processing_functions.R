@@ -2,7 +2,9 @@
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
+  #  Dummy variables
   source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
+  # End dummy variables
   
   myfiles <- list.files(source_file_location
                         ,pattern = "Avg"
@@ -40,7 +42,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
     running_total = running_total+number_of_records
   }
   
-  sfdata_header <- as.character(read.csv("../metadata/minute_average_header_for_r.csv"
+  sfdata_header <- as.character(read.csv("metadata/minute_average_header_for_r.csv"
                                          ,header = FALSE
                                          ,sep = ","
                                          ,stringsAsFactors = FALSE
@@ -48,28 +50,29 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   
   names(sfdata) <- sfdata_header
+  return(sfdata)
 }
 
 
 read_sfdata_metadata <- function(){
-  ring_ids <- read.csv("../metadata/ring_ids.csv"
+  ring_ids <- read.csv("metadata/ring_ids.csv"
                        ,stringsAsFactors = FALSE
                        ,colClasses = 'character'
   )
   
-  projects <- read.csv("../metadata/projects.csv"
+  projects <- read.csv("metadata/projects.csv"
                        ,stringsAsFactors = FALSE
                        ,colClasses = 'character'
   )
-  start_dates <- read.csv("../metadata/start_dates.csv"
+  start_dates <- read.csv("metadata/start_dates.csv"
                           ,stringsAsFactors = FALSE
                           ,colClasses = 'character'
   )
-  end_dates <- read.csv("../metadata/end_dates.csv"
+  end_dates <- read.csv("metadata/end_dates.csv"
                         ,stringsAsFactors = FALSE
                         ,colClasses = 'character'
   )
-  fumigation_type <- read.csv("../metadata/fumigation_type.csv"
+  fumigation_type <- read.csv("metadata/fumigation_type.csv"
                               ,stringsAsFactors = FALSE
                               ,colClasses = 'character'
   )
@@ -98,7 +101,7 @@ make_error_template(error_df, original_df, default_placeholder){
 check_ranges <- function(my_sfdata,column_name){
   temp_col = "wind_speed"
   my_sfdata = sfdatat5
-  interval_file <- read.csv("../metadata/valid_ranges.csv"
+  interval_file <- read.csv("metadata/valid_ranges.csv"
                             ,stringsAsFactors = FALSE
                             ,colClasses = c('character')
   )

@@ -1,0 +1,206 @@
+*****************
+** Description **
+*****************
+
+This file describes how the fumigation data at SoyFACE is collected and stored. It includes a description of file names and locations, column names, units and possible values.
+
+This information is useful if you want to calculate statistics based on the raw fumigation data.
+
+It also describes how to use SAS to compile the minute data collected at SoyFACE into hourly and daily averages.
+
+
+***********************************
+** Data transmission and caveats **
+***********************************
+
+All data is collected by the control boxes at each ring and transmitted to the computer in the trailer where it is stored. The control boxes transmit their information at both 4 second and 1 minute intervals. The information transmitted at 4 second intervals is the instantaneous reading from each device and 1 minute intervals is an average for each device over 1 minute. The transmission times are not set in stone, sometimes they will vary slightly.
+
+All the data is stored as comma separated files in Z:\FaceData on the main computer in the trailer and is organized by ring number or ambient.
+
+There are four file formats.
+Four-second interval
+One-minute averages
+Ambient CO2
+Ambient O3
+
+The four-second and one-minute data files are each associated with a specific ring. The ambient CO2 and O3 data files are collected at a central location at the field site and are not associated with a specific ring.
+
+The transmission from the control boxes to the trailer is not perfect and sometimes characters will be missing. It is easiest to check for this by graphing the data or looking at the number of columns for a time point. Usually a comma separator will be missing so the data will look obviously wrong in the graph and a column will be missing. If a digit is missing in a two or three digit number there will be a point in an otherwise smooth curve that is far out of place. We usually notice and fix these soon after they happen but it's always possible that some may be left.
+
+********************************
+** FOUR-SECOND INTERVAL FILES **
+********************************
+
+The 4 second interval files will be named Dat_MMDDYY where MMDDYY is the two digit month, day and year. They will be stored in the folder of their ring. Notice that the file name has no indication of what ring the file belongs to. The columns in the files follow this format:
+
+A - Interval type. For 4 second files this will be "S" for second.
+
+B - Ring ID. This is the number the computer uses to tell what ring it is recieving data from. It changes depending on whether corn is included in the experiment that year. See the RING IDs section to see which rings use which IDs.
+
+C - Time in H:MM:SS format on a 24 hour time scale. Notice that the hour may have one or two digits.
+
+D - VOut1. This is the voltage used to control the amount of gas a ring recieves. It ranges from 0 to 10 volts. 0 is completely off. 10 is completely open. For CO2 and CO2xO3 rings VOut1 controls CO2. For O3 rings it controls O3.
+
+E - Measured1. This is the measured reading for the gas controlled by VOut1. For CO2 and CO2xO3 rings it is parts per million of CO2. For O3 rings it is parts per billion of O3
+
+F - Setpoint1. This is the set point for the gas controlled by VOut1. For CO2 and CO2xO3 rings it should remain the same and as of 2008 is 550 ppm. For O3 rings it will be the ambient value at that time point times the O3 multiplier. As of 2008 the 03 multiplier is 2.0.
+
+G - VOut2. This is the voltage for O3 in CO2xO3 rings. It works the same as VOut1. For Co2 only and O3 only rings VOut2 will always be 0.
+
+H - Measured2. Same as Measured1 but for VOut2. In CO2-only and O3-only rings it will always be 0.
+
+I - Setpoint2. Same as Setpoint1 but for VOut2. In CO2-only and O3-only rings it will always be 0.
+
+J - Wind speed in meters per second measured from the center of the ring.
+
+K - Wind direction measured from the center of the ring in degrees ranging from 0 to 360. 0/360 is North, 90 is East, 180 is South, 270 is West. Wind will be coming from the direction measured.
+
+L - Sector. Which master sector the ring is fumigating. This is controlled by wind direction. It ranges from 1 to 8. The sectors are labeled clockwise on an octagon with the northern sector being 1. When a master sector is active its two adjacent slave sectors will also be active. ie. If master 1 is on slaves 8 and 2 will also be on. This ensures the entire ring is fumigated. This varibale is only updated when fumigation is on for that ring otherwise it will keep its last value.
+
+*******************************
+** ONE-MINUTE INTERVAL FILES **
+*******************************
+
+The 1 minute interval files will be named Avg_MMDDYY. The columns follow this format.
+
+A - Interval type. In 1 minute files this will be "M" for minute.
+
+B - Ring ID (See "RING IDs" section below for details)
+
+C - Date. In M/DD/YY format. Notice that the month can have one or two digits.
+
+D - Time. HH:MM:SS
+
+E - VOut1
+
+F - Measured1
+
+G - Setpoint1
+
+H - VOut2
+
+I - Measured2
+
+J - Setpoint2
+
+K - Wind speed
+
+L - Wind Direction (See "Sectors and wind direction" section below for details)
+
+M - Sector
+
+N - I don't know what this is.
+
+O - Leaf wetness. This is the resistance from the leaf wetness sensor for that ring. Leaf wetness sensors are only attached to O3 and CO2xO3 rings. This number will be present for other rings but is not actually measured. If this number drops below 1.5 for any ring, ozone will shut down for all rings.
+
+******************************
+** AMBIENT CO2 AND O3 FILES **
+******************************
+
+* Ambient data is transmitted about every minute and is saved in the ambient folder. Ambient CO2 data files will be named Avg_MMDDYY. The columns follow this format.
+
+A - Interval type. "A" for ambient.
+
+B - Always 1 for ambient CO2
+
+C - M/D/YYYY
+
+D - H:MM:SS
+
+E - Measured CO2 in ppm.
+
+
+* Ambient O3 files will be named O3_MMDDYY and follow this format.
+
+A - Interval type. "A" for ambient.
+
+B - "O" for ozone.
+
+C - D/M/YYYY
+
+D - H:MM:SS
+
+E - Measured O3 in ppb.
+
+**************
+** RING IDs **
+**************
+
+The ring IDs in the file are not the same as the ring numbers used in the experiment. Below are the "Ring number"/"Ring ID" pairs for 2002-2008. The experiment is changing in 2009, so make sure these still work.
+
+Control rings have no ID number
+
+Ring Number/Ring ID
+
+**Years with soy only**
+
+2/0
+3/1
+5/2
+6/3
+7/4
+8/5
+9/6
+12/7
+13/8
+14/9
+15/10
+16/11
+
+**Years with both soy and corn**
+
+3/0
+5/1
+14/2
+15/3
+18/4
+19/5
+20/6
+21/7
+22/8
+23/9
+26/10
+27/11
+28/12
+29/13
+30/14
+31/15
+
+********************************
+** Sectors and wind direction **
+********************************
+
+These are the wind direction values that I assume will activate each sector in a ring.  I have not looked at the code to be sure these values are correct.
+
+Sector : Lower limit - Upper limit
+
+1 : 337.5 - 22.5
+2 : 22.5 - 67.5
+3 : 67.5 - 112.5
+4 : 112.5 - 157.5
+5 : 157.5 - 202.5
+6 : 202.5 - 247.5
+7 : 247.5 - 292.5
+8 : 292.5 - 337.5
+
+*********************************
+** Compiling the data with SAS **
+*********************************
+
+This requires access to computers with BASH and SAS.  BASH comes standard with most Linux distributions.  You can also download Cygwin (www.cygwin.com), which includes BASH.  The commands given here are for Linux.  If you use Cygwin, you will need to modify the commands.
+
+1) COPY (don't move) the data to the "SoyFACE Data" folder, just in case something screws up.
+
+2) Use BASH and go to the folder with the minute averages, and execute the following command. Replace 'XXXX' with the appropriate year.
+find -name "Avg*.csv" -exec cat '{}' >> '../Minute, hourly and daily means/Minute means/soyfacefumigationXXXX.csv' \;
+
+3) Run the "Import minutely fumigation data to make daily and hourly means.sas" file.  In the first line (%let parseyear = XXXX;), change 'XXXX' to the appropriate year.  SAS uses the parseyear variable to find the minute means file, and name the output files.
+
+SAS complains about it not importing successfully, but I'm pretty certain that's because the data files have lots of goof-ups in them (missing data points).
+
+Two files are created:
+SoyFACE 2008 fumigation, hourly means.csv
+SoyFACE 2008 fumigation, daily means.csv
+
+The hourly means are the averages between hours, e.g. average of all points between 1:00 - 1:59;
+Daily means contains daytime means between 6:00am and 8:00pm.  Nighttime includes 12:00am to 5:59am and 8:01pm - 11:59pm.  Times are not adjusted for daylight savings time.
