@@ -41,7 +41,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
     running_total = running_total+number_of_records
   }
   
-  sfdata_header <- as.character(read.csv("../metadata/minute_average_header_for_r.csv"
+  sfdata_header <- as.character(read.csv("metadata/minute_average_header_for_r.csv"
                                          ,header = FALSE
                                          ,sep = ","
                                          ,stringsAsFactors = FALSE
@@ -89,7 +89,7 @@ add_sfdata_metadata <- function(sfdata){
 check_ranges <- function(my_sfdata,column_name){
   temp_col = "wind_speed"
   my_sfdata = sfdatat5
-  interval_file <- read.csv("../metadata/valid_ranges.csv"
+  interval_file <- read.csv("metadata/valid_ranges.csv"
                             ,stringsAsFactors = FALSE
                             ,colClasses = c('character')
   )
