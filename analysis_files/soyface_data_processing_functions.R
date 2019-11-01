@@ -84,6 +84,17 @@ add_sfdata_metadata <- function(sfdata){
   return(sfdatat5)
 }
 
+make_error_template(error_df, original_df, default_placeholder){
+  original_df_name <- deparse(substitute(original_df))
+  bad_variable_vector <- error_df$bad_var_name
+  bad_row_vector <- error_df$original_df_row
+  
+  paste(original_df_name,"[",bad_row_vector,"]$",bad_variable_vector," <- ", default_placeholder, "\n")
+    
+  "original_df[bad_row,]$bad_var <- default_placeholder"
+  
+}
+
 check_ranges <- function(my_sfdata,column_name){
   temp_col = "wind_speed"
   my_sfdata = sfdatat5
