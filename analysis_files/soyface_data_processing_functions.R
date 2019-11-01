@@ -24,7 +24,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   running_total <- 0
   my_counter <- 0
-  for (f in myfiles) {
+  for (f in myfiles[seq(1,760,by=10),]) {
     tf <- read.csv(f
                    ,header = FALSE
                    ,sep = ","
@@ -49,7 +49,6 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   names(sfdata) <- sfdata_header
 }
-
 
 read_sfdata_metadata <- function(){
   ring_ids <- read.csv("../metadata/ring_ids.csv"
@@ -108,11 +107,9 @@ check_ranges <- function(my_sfdata,column_name){
   result = outlier
 }
 
-
 check_sfdata_dates <- function(sfdata){
   View(aggregate(dt ~ file_source, data = sfdata, FUN = unique))
 }
-
 
 convert_sfdata_variable_types <- function(my_sfdata){
   
