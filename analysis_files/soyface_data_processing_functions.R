@@ -87,15 +87,26 @@ add_sfdata_metadata <- function(sfdata){
   return(sfdatat5)
 }
 
-make_error_template(error_df, original_df, default_placeholder){
-  original_df_name <- deparse(substitute(original_df))
+
+make_error_template <- function(error_df, original_df, default_placeholder){
+  
+  # dummy data
+  sfdata_unchecked_errors <- sfdata_unchecked[seq(1,76, by = 10),]
+  sfdata_unchecked_errors$original_df_row <- seq(1,76, by = 10)
+  sfdata_unchecked_errors$bad_var_name <- "layer_1_concentration"
+  
+  error_df <- sfdata_unchecked_errors
+  original_df <- sfdata_unchecked
+  default_placeholder <- "NA"
+  # end dummy data
+  
+  
+  original_df_name <- deparse(substitute(original_df)) # this might not do what I want inside a function
   bad_variable_vector <- error_df$bad_var_name
   bad_row_vector <- error_df$original_df_row
   
-  paste(original_df_name,"[",bad_row_vector,"]$",bad_variable_vector," <- ", default_placeholder, "\n")
-    
-  "original_df[bad_row,]$bad_var <- default_placeholder"
-  
+  writeClipboard(paste(original_df_name,"[",bad_row_vector,",]$",bad_variable_vector," <- ", default_placeholder, sep = "", collapse = "\n"))
+
 }
 
 check_ranges <- function(my_sfdata,column_name){
