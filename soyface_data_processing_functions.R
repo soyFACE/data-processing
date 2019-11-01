@@ -1,6 +1,6 @@
 # SoyFACE Data Processing Functions
 # Test update -JAM
-# test Yuxi 
+# JAM line 3
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
@@ -17,7 +17,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
                      ,stringsAsFactors = FALSE
                      ,colClasses = 'character'
   )
-  
+# JAM line 21  
   ### this is a random text   
   
   #CHECK CHECK 
