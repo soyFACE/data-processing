@@ -2,9 +2,7 @@
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
-  #  Dummy variables
   source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
-  # End dummy variables
   
   myfiles <- list.files(source_file_location
                         ,pattern = "Avg"
@@ -42,7 +40,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
     running_total = running_total+number_of_records
   }
   
-  sfdata_header <- as.character(read.csv("metadata/minute_average_header_for_r.csv"
+  sfdata_header <- as.character(read.csv("../metadata/minute_average_header_for_r.csv"
                                          ,header = FALSE
                                          ,sep = ","
                                          ,stringsAsFactors = FALSE
@@ -50,28 +48,48 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   
   names(sfdata) <- sfdata_header
-  return(sfdata)
+}
+
+check_sfdata_types <- function(sfdata){
+  error_row <- data.frame(cbind(sfdata_unchecked, flag = "text")) 
+  error_row <- error_row[0,]
+  type_file <-  read.csv("metadata/valid_ranges.csv"
+                         ,stringsAsFactors = FALSE
+                         ,colClasses = c('character'))
+  
+  for(i in names(sfdata_unchecked)){
+    my_type <- type_file[type_file$variable == i,"type"]
+    print(c(i,my_type))
+    rbind(error_row,check_types_convertible(i,my_type))
+  }
+  
+}
+
+check_types_convertible <- function(columname, my_type){
+  columname = "wind_speed"
+  my_type = character
+  error_row <- sfdata_unchecked[sapply(sfdata_unchecked[columname],function(x) !is(x,my_type)),]
 }
 
 read_sfdata_metadata <- function(){
-  ring_ids <- read.csv("metadata/ring_ids.csv"
+  ring_ids <- read.csv("../metadata/ring_ids.csv"
                        ,stringsAsFactors = FALSE
                        ,colClasses = 'character'
   )
   
-  projects <- read.csv("metadata/projects.csv"
+  projects <- read.csv("../metadata/projects.csv"
                        ,stringsAsFactors = FALSE
                        ,colClasses = 'character'
   )
-  start_dates <- read.csv("metadata/start_dates.csv"
+  start_dates <- read.csv("../metadata/start_dates.csv"
                           ,stringsAsFactors = FALSE
                           ,colClasses = 'character'
   )
-  end_dates <- read.csv("metadata/end_dates.csv"
+  end_dates <- read.csv("../metadata/end_dates.csv"
                         ,stringsAsFactors = FALSE
                         ,colClasses = 'character'
   )
-  fumigation_type <- read.csv("metadata/fumigation_type.csv"
+  fumigation_type <- read.csv("../metadata/fumigation_type.csv"
                               ,stringsAsFactors = FALSE
                               ,colClasses = 'character'
   )
@@ -89,7 +107,7 @@ add_sfdata_metadata <- function(sfdata){
 check_ranges <- function(my_sfdata,column_name){
   temp_col = "wind_speed"
   my_sfdata = sfdatat5
-  interval_file <- read.csv("metadata/valid_ranges.csv"
+  interval_file <- read.csv("../metadata/valid_ranges.csv"
                             ,stringsAsFactors = FALSE
                             ,colClasses = c('character')
   )
