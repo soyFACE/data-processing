@@ -1,0 +1,14 @@
+year,variable,lower_limit,upper_limit,type
+2019,wind_speed,-1,30,numeric
+2019,wind_direction,0,360,numeric
+2019,layer_1_vout,0,10,numeric
+2019,layer_1_concentration,-10,1000,numeric
+2019,layer_1_setpoint,600,600,numeric
+2019,layer_2_vout,0,10,numeric
+2019,layer_2_concentration,-10,500,numeric
+2019,layer_2_setpoint,100,100,numeric
+2019,number_of_records,0,,numeric
+2019,year,2019,2019,character
+2019,sector,1,8,numeric
+2019,o3_on,0,1,numeric
+2019,leaf_wetness,0,5,numeric

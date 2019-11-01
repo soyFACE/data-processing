@@ -2,6 +2,7 @@
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
+  # Dummy variables
   source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
   
   myfiles <- list.files(source_file_location
@@ -48,28 +49,29 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   
   names(sfdata) <- sfdata_header
+  return(sfdata)
 }
 
 
 read_sfdata_metadata <- function(){
-  ring_ids <- read.csv("../metadata/ring_ids.csv"
+  ring_ids <- read.csv("metadata/ring_ids.csv"
                        ,stringsAsFactors = FALSE
                        ,colClasses = 'character'
   )
   
-  projects <- read.csv("../metadata/projects.csv"
+  projects <- read.csv("metadata/projects.csv"
                        ,stringsAsFactors = FALSE
                        ,colClasses = 'character'
   )
-  start_dates <- read.csv("../metadata/start_dates.csv"
+  start_dates <- read.csv("metadata/start_dates.csv"
                           ,stringsAsFactors = FALSE
                           ,colClasses = 'character'
   )
-  end_dates <- read.csv("../metadata/end_dates.csv"
+  end_dates <- read.csv("metadata/end_dates.csv"
                         ,stringsAsFactors = FALSE
                         ,colClasses = 'character'
   )
-  fumigation_type <- read.csv("../metadata/fumigation_type.csv"
+  fumigation_type <- read.csv("metadata/fumigation_type.csv"
                               ,stringsAsFactors = FALSE
                               ,colClasses = 'character'
   )
