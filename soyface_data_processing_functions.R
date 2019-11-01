@@ -16,6 +16,8 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
                      ,colClasses = 'character'
   )
   
+  ### this is a random text
+  
   record_number_estimate <- length(myfiles)*1440*1.1 # Estimate how big the total data frame will need to be based on how many files will be read, times the minutes in a day with 10% leeway.
   
   sfdata[1:record_number_estimate,] <- NA
