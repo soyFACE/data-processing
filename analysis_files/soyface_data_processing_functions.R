@@ -67,8 +67,9 @@ check_sfdata_types <- function(sfdata){
 
 check_types_convertible <- function(columname, my_type){
   columname = "wind_speed"
-  my_type = character
-  error_row <- sfdata_unchecked[sapply(sfdata_unchecked[columname],function(x) !is(x,my_type)),]
+  my_type = "character"
+  check = as(sfdata_unchecked[columname],my_type)
+  error_row <- sfdata_unchecked[is.na(sfdata_unchecked[columname]),]
 }
 
 read_sfdata_metadata <- function(){
