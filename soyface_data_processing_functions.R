@@ -1,4 +1,5 @@
 # SoyFACE Data Processing Functions
+# Test update -JAM
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
