@@ -65,7 +65,11 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
 }
 
 check_sfdata_types <- function(unchecked_df){
+  # Dummy data
+  if (FALSE){
   unchecked_df <- test_data
+  }
+  # End dummy data
   error_row <- data.frame(cbind(unchecked_df, flag = "text")) 
   error_row <- error_row[0,]
   
@@ -92,8 +96,12 @@ check_types_convertible <- function(columname, my_type,unchecked_df){
 }
 
 check_ranges <- function(my_sfdata,column_name){
+  # Dummy data
+  if (FALSE) {
   column_name <- "wind_direction"
   my_sfdata <- out_of_range_data
+  }
+  # End dummy data
 
   range_type <- valid_range[valid_range$variable == column_name,"type"]
   lower_limit <- valid_range[valid_range$variable == column_name,"lower_limit"]
@@ -118,6 +126,7 @@ check_ranges <- function(my_sfdata,column_name){
 make_error_template <- function(error_df, original_df, default_placeholder){
   
   # dummy data
+  if (FALSE){
   sfdata_unchecked_errors <- sfdata_unchecked[seq(1,76, by = 10),]
   sfdata_unchecked_errors$original_df_row <- seq(1,76, by = 10)
   sfdata_unchecked_errors$bad_var_name <- "layer_1_concentration"
@@ -125,6 +134,7 @@ make_error_template <- function(error_df, original_df, default_placeholder){
   error_df <- sfdata_unchecked_errors
   original_df <- sfdata_unchecked
   default_placeholder <- "NA"
+  }
   # end dummy data
   
   
@@ -161,8 +171,13 @@ read_sfdata_metadata <- function(){
 }
 
 add_sfdata_metadata <- function(my_data){
-  my_data = 
-    sfdatat1 <- merge(sfdata, ring_ids, by = c("ring_id", "year"))
+  # Dummy data
+  if (FALSE){
+  my_data = test_data
+  }
+  # End dummy data
+  
+  sfdatat1 <- merge(sfdata, ring_ids, by = c("ring_id", "year"))
   sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number", "year"))
   sfdatat3 <- merge(sfdatat2, start_dates, by = c("project","year"))
   sfdatat4 <- merge(sfdatat3, fumigation_type, by = c("ring_number","year"))
