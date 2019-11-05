@@ -1,6 +1,7 @@
 # SoyFACE Data Processing Functions
 
 ############################load data###############################
+if (FALSE){
 load("../processed_r_data/sfdata_unchecked.rdata")
 valid_range <- read.csv("../metadata/valid_ranges.csv"
                         ,stringsAsFactors = FALSE
@@ -13,6 +14,7 @@ test_data[4,]$layer_1_concentration <- "error"
 out_of_range_data <- sfdata_unchecked
 out_of_range_data[3,]$wind_direction <- 500
 ###################################################################
+}
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
@@ -38,7 +40,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   running_total <- 0
   my_counter <- 0
-  for (f in myfiles[seq(1,760,by=10),]) {
+  for (f in myfiles) {
     tf <- read.csv(f
                    ,header = FALSE
                    ,sep = ","
@@ -215,7 +217,7 @@ convert_sfdata_variable_types <- function(my_sfdata){
 
 # my_sfdata <- my_sfdata[!is.na(my_sfdata$datetime) & my_sfdata$datetime >= my_sfdata$start_date,]
 
-
+if(FALSE){
 average_sf_data
 
 investigate_statistical_properties
@@ -223,6 +225,6 @@ investigate_statistical_properties
 calc_sf_data_time_within_target
 
 make_face_stats
-
+}
 # TO-DO add plotting functions
 
