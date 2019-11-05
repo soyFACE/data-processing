@@ -2,16 +2,21 @@
 
 ############################load data###############################
 load("../processed_r_data/sfdata_unchecked.rdata")
+load("../processed_r_data/sfdata.Rdata")
 valid_range <- read.csv("../metadata/valid_ranges.csv"
                         ,stringsAsFactors = FALSE
                         ,colClasses = c('character'))
+
+sfdata_unchecked$layer_2_concentration <-  0
+sfdata_unchecked$layer_2_vout <-  0
+sfdata_unchecked$layer_2_setpoint <-  0
+
 
 test_data <- sfdata_unchecked
 test_data[2,]$wind_speed <- "error"
 test_data[4,]$layer_1_concentration <- "error"
 
 out_of_range_data <- sfdata_unchecked
-out_of_range_data[3,]$wind_direction <- 500
 ###################################################################
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
@@ -38,7 +43,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   running_total <- 0
   my_counter <- 0
-  for (f in myfiles[seq(1,760,by=10),]) {
+  for (f in myfiles) {
     tf <- read.csv(f
                    ,header = FALSE
                    ,sep = ","
@@ -116,8 +121,10 @@ check_ranges <- function(column_name,my_sfdata){
   outlier <- outlier[0,]
   
   range_type <- valid_range[valid_range$variable == column_name,"type"]
+  
   empty_return <- data.frame(cbind(my_sfdata, Range_flag = "TEXT"))
   empty_return <- empty_return[0,]
+  
   if(range_type != "numeric") return(empty_return)
   
   lower_limit <- valid_range[valid_range$variable == column_name,"lower_limit"]
