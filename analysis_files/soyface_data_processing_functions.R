@@ -17,8 +17,10 @@ out_of_range_data[3,]$wind_direction <- 500
 ###################################################################
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
-  
+  # Dummy Data
+  if (FALSE){
   source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
+  }
   
   myfiles <- list.files(source_file_location
                         ,pattern = "Avg"
@@ -56,7 +58,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
     running_total = running_total+number_of_records
   }
   
-  sfdata_header <- as.character(read.csv("../metadata/minute_average_header_for_r.csv"
+  sfdata_header <- as.character(read.csv("metadata/minute_average_header_for_r.csv"
                                          ,header = FALSE
                                          ,sep = ","
                                          ,stringsAsFactors = FALSE
@@ -64,6 +66,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   
   names(sfdata) <- sfdata_header
+  return(sfdata)
 }
 
 check_sfdata_types <- function(unchecked_df){
