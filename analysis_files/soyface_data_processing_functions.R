@@ -16,7 +16,8 @@ test_data <- sfdata_unchecked
 test_data[2,]$wind_speed <- "error"
 test_data[4,]$layer_1_concentration <- "error"
 
-out_of_range_data <- sfdata_unchecked
+out_of_range_data <- sfdata
+out_of_range_data = na.omit(out_of_range_data)
 ###################################################################
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
@@ -249,3 +250,7 @@ make_face_stats
 
 # TO-DO add plotting functions
 
+
+check = out_of_range_row %>%
+  group_by(Range_flag)%>%
+  summarise(n = n())
