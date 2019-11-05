@@ -69,6 +69,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   return(sfdata)
 }
 
+#This needs the valid ranges passed to it - JAM
 check_sfdata_types <- function(unchecked_df){
   # Dummy data
   if (FALSE){
