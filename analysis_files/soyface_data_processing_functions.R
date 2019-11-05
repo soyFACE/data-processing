@@ -1,5 +1,19 @@
 # SoyFACE Data Processing Functions
 
+############################load data###############################
+load("../processed_r_data/sfdata_unchecked.rdata")
+valid_range <- read.csv("../metadata/valid_ranges.csv"
+                        ,stringsAsFactors = FALSE
+                        ,colClasses = c('character'))
+
+test_data <- sfdata_unchecked
+test_data[2,]$wind_speed <- "error"
+test_data[4,]$layer_1_concentration <- "error"
+
+out_of_range_data <- sfdata_unchecked
+out_of_range_data[3,]$wind_direction <- 500
+###################################################################
+
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
@@ -50,26 +64,76 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   names(sfdata) <- sfdata_header
 }
 
-check_sfdata_types <- function(sfdata){
-  error_row <- data.frame(cbind(sfdata_unchecked, flag = "text")) 
+check_sfdata_types <- function(unchecked_df){
+  unchecked_df <- test_data
+  error_row <- data.frame(cbind(unchecked_df, flag = "text")) 
   error_row <- error_row[0,]
-  type_file <-  read.csv("metadata/valid_ranges.csv"
-                         ,stringsAsFactors = FALSE
-                         ,colClasses = c('character'))
   
-  for(i in names(sfdata_unchecked)){
-    my_type <- type_file[type_file$variable == i,"type"]
-    print(c(i,my_type))
-    rbind(error_row,check_types_convertible(i,my_type))
+  for(i in names(unchecked_df)){
+    my_type <- valid_range[valid_range$variable == i,"type"]
+    error_row_i <- check_types_convertible(i,my_type,unchecked_df)
+    
+    if(nrow(error_row_i)!= 0){
+      error_row_i$flag <- i
+      error_row = rbind(error_row,error_row_i)
+    }
   }
   
+  return(error_row)
 }
 
-check_types_convertible <- function(columname, my_type){
-  columname = "wind_speed"
-  my_type = "character"
-  check = as(sfdata_unchecked[columname],my_type)
-  error_row <- sfdata_unchecked[is.na(sfdata_unchecked[columname]),]
+check_types_convertible <- function(columname, my_type,unchecked_df){
+  converted_column = lapply(unchecked_df[columname], function(x) as(x,my_type))
+  converted_column = data.frame(unlist(converted_column))
+  converted_data = unchecked_df
+  converted_data[columname] = converted_column[,1]
+  error_row_by_column <- converted_data[is.na(converted_data[columname]),]
+  return(error_row_by_column)
+}
+
+check_ranges <- function(my_sfdata,column_name){
+  column_name <- "wind_direction"
+  my_sfdata <- out_of_range_data
+
+  range_type <- valid_range[valid_range$variable == column_name,"type"]
+  lower_limit <- valid_range[valid_range$variable == column_name,"lower_limit"]
+  upper_limit <- valid_range[valid_range$variable == column_name,"upper_limit"]
+  
+  lower_limit <- as(lower_limit,range_type)
+  upper_limit <- as(upper_limit,range_type)
+  
+  
+  converted_column <- lapply(my_sfdata[column_name], function(x) as(x,my_type))
+  converted_column <- data.frame(unlist(converted_column))
+  
+  my_sfdata[column_name] <- converted_column
+  
+  
+  outlier1 <- my_sfdata[which(my_sfdata[column_name] < lower_limit),]
+  outlier2 <- my_sfdata[which(my_sfdata[column_name] > upper_limit),]
+  outlier <- rbind(outlier1, outlier2)
+}
+
+
+make_error_template <- function(error_df, original_df, default_placeholder){
+  
+  # dummy data
+  sfdata_unchecked_errors <- sfdata_unchecked[seq(1,76, by = 10),]
+  sfdata_unchecked_errors$original_df_row <- seq(1,76, by = 10)
+  sfdata_unchecked_errors$bad_var_name <- "layer_1_concentration"
+  
+  error_df <- sfdata_unchecked_errors
+  original_df <- sfdata_unchecked
+  default_placeholder <- "NA"
+  # end dummy data
+  
+  
+  original_df_name <- deparse(substitute(original_df)) # this might not do what I want inside a function
+  bad_variable_vector <- error_df$bad_var_name
+  bad_row_vector <- error_df$original_df_row
+  
+  writeClipboard(paste(original_df_name,"[",bad_row_vector,",]$",bad_variable_vector," <- ", default_placeholder, sep = "", collapse = "\n"))
+  
 }
 
 read_sfdata_metadata <- function(){
@@ -96,59 +160,14 @@ read_sfdata_metadata <- function(){
   )
 }
 
-add_sfdata_metadata <- function(sfdata){
-  sfdatat1 <- merge(sfdata, ring_ids, by = c("ring_id", "year"))
+add_sfdata_metadata <- function(my_data){
+  my_data = 
+    sfdatat1 <- merge(sfdata, ring_ids, by = c("ring_id", "year"))
   sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number", "year"))
   sfdatat3 <- merge(sfdatat2, start_dates, by = c("project","year"))
   sfdatat4 <- merge(sfdatat3, fumigation_type, by = c("ring_number","year"))
   sfdatat5 <- merge(sfdatat4, end_dates, by = c("fumigation_type","year"))
   return(sfdatat5)
-}
-
-
-make_error_template <- function(error_df, original_df, default_placeholder){
-  
-  # dummy data
-  sfdata_unchecked_errors <- sfdata_unchecked[seq(1,76, by = 10),]
-  sfdata_unchecked_errors$original_df_row <- seq(1,76, by = 10)
-  sfdata_unchecked_errors$bad_var_name <- "layer_1_concentration"
-  
-  error_df <- sfdata_unchecked_errors
-  original_df <- sfdata_unchecked
-  default_placeholder <- "NA"
-  # end dummy data
-  
-  
-  original_df_name <- deparse(substitute(original_df)) # this might not do what I want inside a function
-  bad_variable_vector <- error_df$bad_var_name
-  bad_row_vector <- error_df$original_df_row
-  
-  writeClipboard(paste(original_df_name,"[",bad_row_vector,",]$",bad_variable_vector," <- ", default_placeholder, sep = "", collapse = "\n"))
-
-}
-
-check_ranges <- function(my_sfdata,column_name){
-  temp_col = "wind_speed"
-  my_sfdata = sfdatat5
-  interval_file <- read.csv("../metadata/valid_ranges.csv"
-                            ,stringsAsFactors = FALSE
-                            ,colClasses = c('character')
-  )
-  
-  range_type <- interval_file[interval_file$variable == temp_col,"type"]
-  
-  lower_limit <- interval_file[interval_file$variable == temp_col,"lower_limit"]
-  upper_limit <- interval_file[interval_file$variable == temp_col,"upper_limit"]
-  
-  lower_limit <- as(lower_limit,range_type)
-  upper_limit <- as(upper_limit,range_type)
-  my_sfdata[temp_col] <- as.numeric(unlist(my_sfdata[temp_col]))
-  
-  
-  outlier <- my_sfdata[which(my_sfdata[temp_col] < lower_limit),]
-  outlier2 <- my_sfdata[which(my_sfdata[temp_col] > upper_limit),]
-  
-  result = outlier
 }
 
 check_sfdata_dates <- function(sfdata){
