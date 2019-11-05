@@ -2,16 +2,22 @@
 
 ############################load data###############################
 load("../processed_r_data/sfdata_unchecked.rdata")
+load("../processed_r_data/sfdata.Rdata")
 valid_range <- read.csv("../metadata/valid_ranges.csv"
                         ,stringsAsFactors = FALSE
                         ,colClasses = c('character'))
+
+sfdata_unchecked$layer_2_concentration <-  0
+sfdata_unchecked$layer_2_vout <-  0
+sfdata_unchecked$layer_2_setpoint <-  0
+
 
 test_data <- sfdata_unchecked
 test_data[2,]$wind_speed <- "error"
 test_data[4,]$layer_1_concentration <- "error"
 
-out_of_range_data <- sfdata_unchecked
-out_of_range_data[3,]$wind_direction <- 500
+out_of_range_data <- sfdata
+out_of_range_data = na.omit(out_of_range_data)
 ###################################################################
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
@@ -38,7 +44,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   running_total <- 0
   my_counter <- 0
-  for (f in myfiles[seq(1,760,by=10),]) {
+  for (f in myfiles) {
     tf <- read.csv(f
                    ,header = FALSE
                    ,sep = ","
@@ -91,11 +97,37 @@ check_types_convertible <- function(columname, my_type,unchecked_df){
   return(error_row_by_column)
 }
 
-check_ranges <- function(my_sfdata,column_name){
-  column_name <- "wind_direction"
-  my_sfdata <- out_of_range_data
 
+check_sfdata_range <- function(my_df){
+  my_df <- out_of_range_data
+  out_of_range_row <- data.frame(cbind(my_df, type_flag = "text")) 
+  out_of_range_row <- out_of_range_row[0,]
+  
+  for(i in names(my_df)){
+    
+    out_of_range_row_i <- check_ranges(i, my_df)
+    
+    if(nrow(out_of_range_row_i)!= 0){
+      out_of_range_row = rbind(out_of_range_row,out_of_range_row_i)
+    }
+  }
+  
+  return(out_of_range_row)
+}
+
+
+
+check_ranges <- function(column_name,my_sfdata){
+  outlier <- data.frame(cbind(my_sfdata, Range_flag = "text")) 
+  outlier <- outlier[0,]
+  
   range_type <- valid_range[valid_range$variable == column_name,"type"]
+  
+  empty_return <- data.frame(cbind(my_sfdata, Range_flag = "TEXT"))
+  empty_return <- empty_return[0,]
+  
+  if(range_type != "numeric") return(empty_return)
+  
   lower_limit <- valid_range[valid_range$variable == column_name,"lower_limit"]
   upper_limit <- valid_range[valid_range$variable == column_name,"upper_limit"]
   
@@ -103,7 +135,7 @@ check_ranges <- function(my_sfdata,column_name){
   upper_limit <- as(upper_limit,range_type)
   
   
-  converted_column <- lapply(my_sfdata[column_name], function(x) as(x,my_type))
+  converted_column <- lapply(my_sfdata[column_name], function(x) as(x,range_type))
   converted_column <- data.frame(unlist(converted_column))
   
   my_sfdata[column_name] <- converted_column
@@ -111,7 +143,14 @@ check_ranges <- function(my_sfdata,column_name){
   
   outlier1 <- my_sfdata[which(my_sfdata[column_name] < lower_limit),]
   outlier2 <- my_sfdata[which(my_sfdata[column_name] > upper_limit),]
+  
   outlier <- rbind(outlier1, outlier2)
+  if(nrow(outlier)!=0){
+    outlier$Range_flag = column_name
+  }
+  
+  return(outlier)
+  
 }
 
 
@@ -211,3 +250,7 @@ make_face_stats
 
 # TO-DO add plotting functions
 
+
+check = out_of_range_row %>%
+  group_by(Range_flag)%>%
+  summarise(n = n())
