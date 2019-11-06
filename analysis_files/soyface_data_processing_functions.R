@@ -1,6 +1,7 @@
 # SoyFACE Data Processing Functions
 
 ############################load data###############################
+if (FALSE){
 load("../processed_r_data/sfdata_unchecked.rdata")
 load("../processed_r_data/sfdata.Rdata")
 valid_range <- read.csv("../metadata/valid_ranges.csv"
@@ -16,13 +17,18 @@ test_data <- sfdata_unchecked
 test_data[2,]$wind_speed <- "error"
 test_data[4,]$layer_1_concentration <- "error"
 
+
 out_of_range_data <- sfdata
 out_of_range_data = na.omit(out_of_range_data)
+}
+
 ###################################################################
 
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
-  
+  # Dummy Data
+  if (FALSE){
   source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
+  }
   
   myfiles <- list.files(source_file_location
                         ,pattern = "Avg"
@@ -60,7 +66,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
     running_total = running_total+number_of_records
   }
   
-  sfdata_header <- as.character(read.csv("../metadata/minute_average_header_for_r.csv"
+  sfdata_header <- as.character(read.csv("metadata/minute_average_header_for_r.csv"
                                          ,header = FALSE
                                          ,sep = ","
                                          ,stringsAsFactors = FALSE
@@ -68,12 +74,19 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   
   names(sfdata) <- sfdata_header
+  return(sfdata)
 }
 
+#This needs the valid ranges passed to it - JAM
 check_sfdata_types <- function(unchecked_df){
+  # Dummy data
+  if (FALSE){
   unchecked_df <- test_data
+  }
+  # End dummy data
   error_row <- data.frame(cbind(unchecked_df, flag = "text")) 
   error_row <- error_row[0,]
+
   
   for(i in names(unchecked_df)){
     my_type <- valid_range[valid_range$variable == i,"type"]
@@ -97,9 +110,12 @@ check_types_convertible <- function(columname, my_type,unchecked_df){
   return(error_row_by_column)
 }
 
-
 check_sfdata_range <- function(my_df){
+  # Dummy Data
+  if (FALSE){
   my_df <- out_of_range_data
+  }
+  # End dummy data
   out_of_range_row <- data.frame(cbind(my_df, type_flag = "text")) 
   out_of_range_row <- out_of_range_row[0,]
   
@@ -156,7 +172,8 @@ check_ranges <- function(column_name,my_sfdata){
 
 make_error_template <- function(error_df, original_df, default_placeholder){
   
-  # dummy data
+  # Dummy data
+  if (FALSE){
   sfdata_unchecked_errors <- sfdata_unchecked[seq(1,76, by = 10),]
   sfdata_unchecked_errors$original_df_row <- seq(1,76, by = 10)
   sfdata_unchecked_errors$bad_var_name <- "layer_1_concentration"
@@ -164,12 +181,13 @@ make_error_template <- function(error_df, original_df, default_placeholder){
   error_df <- sfdata_unchecked_errors
   original_df <- sfdata_unchecked
   default_placeholder <- "NA"
-  # end dummy data
+  }
+  # End dummy data
   
   
   original_df_name <- deparse(substitute(original_df)) # this might not do what I want inside a function
-  bad_variable_vector <- error_df$bad_var_name
-  bad_row_vector <- error_df$original_df_row
+  bad_variable_vector <- error_df$flag
+  bad_row_vector <- row.names(error_df)
   
   writeClipboard(paste(original_df_name,"[",bad_row_vector,",]$",bad_variable_vector," <- ", default_placeholder, sep = "", collapse = "\n"))
   
@@ -200,8 +218,12 @@ read_sfdata_metadata <- function(){
 }
 
 add_sfdata_metadata <- function(my_data){
-  my_data = 
-    sfdatat1 <- merge(sfdata, ring_ids, by = c("ring_id", "year"))
+  # Dummy data
+  if (FALSE){
+  my_data = test_data
+  }
+  # End dummy data
+  sfdatat1 <- merge(sfdata, ring_ids, by = c("ring_id", "year"))
   sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number", "year"))
   sfdatat3 <- merge(sfdatat2, start_dates, by = c("project","year"))
   sfdatat4 <- merge(sfdatat3, fumigation_type, by = c("ring_number","year"))
@@ -240,13 +262,13 @@ convert_sfdata_variable_types <- function(my_sfdata){
 # my_sfdata <- my_sfdata[!is.na(my_sfdata$datetime) & my_sfdata$datetime >= my_sfdata$start_date,]
 
 
-average_sf_data
-
-investigate_statistical_properties
-
-calc_sf_data_time_within_target
-
-make_face_stats
+# average_sf_data
+# 
+# investigate_statistical_properties
+# 
+# calc_sf_data_time_within_target
+# 
+# make_face_stats
 
 # TO-DO add plotting functions
 
