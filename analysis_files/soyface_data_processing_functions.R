@@ -2,23 +2,33 @@
 
 ############################load data###############################
 if (FALSE){
-load("../processed_r_data/sfdata_unchecked.rdata")
-valid_range <- read.csv("../metadata/valid_ranges.csv"
-                        ,stringsAsFactors = FALSE
-                        ,colClasses = c('character'))
-
-test_data <- sfdata_unchecked
-test_data[2,]$wind_speed <- "error"
-test_data[4,]$layer_1_concentration <- "error"
-
-out_of_range_data <- sfdata_unchecked
-out_of_range_data[3,]$wind_direction <- 500
-###################################################################
+  load("../processed_r_data/sfdata_unchecked.rdata")
+  load("../processed_r_data/sfdata.Rdata")
+  valid_range <- read.csv("../metadata/valid_ranges.csv"
+                          ,stringsAsFactors = FALSE
+                          ,colClasses = c('character'))
+  
+  sfdata_unchecked$layer_2_concentration <-  0
+  sfdata_unchecked$layer_2_vout <-  0
+  sfdata_unchecked$layer_2_setpoint <-  0
+  
+  
+  test_data <- sfdata_unchecked
+  test_data[2,]$wind_speed <- "error"
+  test_data[4,]$layer_1_concentration <- "error"
+  
+  
+  out_of_range_data <- sfdata
+  out_of_range_data = na.omit(out_of_range_data)
 }
 
+###################################################################
+
 raw_sfdata_avg_to_dataframe <- function(source_file_location){
-  
-  source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
+  # Dummy Data
+  if (FALSE){
+    source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
+  }
   
   myfiles <- list.files(source_file_location
                         ,pattern = "Avg"
@@ -31,7 +41,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
                      ,stringsAsFactors = FALSE
                      ,colClasses = 'character'
   )
-
+  
   record_number_estimate <- length(myfiles)*1440*1.1 # Estimate how big the total data frame will need to be based on how many files will be read, times the minutes in a day with 10% leeway.
   
   sfdata[1:record_number_estimate,] <- NA
@@ -56,7 +66,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
     running_total = running_total+number_of_records
   }
   
-  sfdata_header <- as.character(read.csv("../metadata/minute_average_header_for_r.csv"
+  sfdata_header <- as.character(read.csv("metadata/minute_average_header_for_r.csv"
                                          ,header = FALSE
                                          ,sep = ","
                                          ,stringsAsFactors = FALSE
@@ -64,16 +74,19 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   
   
   names(sfdata) <- sfdata_header
+  return(sfdata)
 }
 
+#This needs the valid ranges passed to it - JAM
 check_sfdata_types <- function(unchecked_df){
   # Dummy data
   if (FALSE){
-  unchecked_df <- test_data
+    unchecked_df <- test_data
   }
   # End dummy data
   error_row <- data.frame(cbind(unchecked_df, flag = "text")) 
   error_row <- error_row[0,]
+  
   
   for(i in names(unchecked_df)){
     my_type <- valid_range[valid_range$variable == i,"type"]
@@ -97,15 +110,40 @@ check_types_convertible <- function(columname, my_type,unchecked_df){
   return(error_row_by_column)
 }
 
-check_ranges <- function(my_sfdata,column_name){
-  # Dummy data
-  if (FALSE) {
-  column_name <- "wind_direction"
-  my_sfdata <- out_of_range_data
+check_sfdata_range <- function(my_df){
+  # Dummy Data
+  if (FALSE){
+    my_df <- out_of_range_data
   }
   # End dummy data
+  out_of_range_row <- data.frame(cbind(my_df, type_flag = "text")) 
+  out_of_range_row <- out_of_range_row[0,]
+  
+  for(i in names(my_df)){
+    
+    out_of_range_row_i <- check_ranges(i, my_df)
+    
+    if(nrow(out_of_range_row_i)!= 0){
+      out_of_range_row = rbind(out_of_range_row,out_of_range_row_i)
+    }
+  }
+  
+  return(out_of_range_row)
+}
 
+
+
+check_ranges <- function(column_name,my_sfdata){
+  outlier <- data.frame(cbind(my_sfdata, Range_flag = "text")) 
+  outlier <- outlier[0,]
+  
   range_type <- valid_range[valid_range$variable == column_name,"type"]
+  
+  empty_return <- data.frame(cbind(my_sfdata, Range_flag = "TEXT"))
+  empty_return <- empty_return[0,]
+  
+  if(range_type != "numeric") return(empty_return)
+  
   lower_limit <- valid_range[valid_range$variable == column_name,"lower_limit"]
   upper_limit <- valid_range[valid_range$variable == column_name,"upper_limit"]
   
@@ -113,7 +151,7 @@ check_ranges <- function(my_sfdata,column_name){
   upper_limit <- as(upper_limit,range_type)
   
   
-  converted_column <- lapply(my_sfdata[column_name], function(x) as(x,my_type))
+  converted_column <- lapply(my_sfdata[column_name], function(x) as(x,range_type))
   converted_column <- data.frame(unlist(converted_column))
   
   my_sfdata[column_name] <- converted_column
@@ -121,28 +159,35 @@ check_ranges <- function(my_sfdata,column_name){
   
   outlier1 <- my_sfdata[which(my_sfdata[column_name] < lower_limit),]
   outlier2 <- my_sfdata[which(my_sfdata[column_name] > upper_limit),]
+  
   outlier <- rbind(outlier1, outlier2)
+  if(nrow(outlier)!=0){
+    outlier$Range_flag = column_name
+  }
+  
+  return(outlier)
+  
 }
 
 
 make_error_template <- function(error_df, original_df, default_placeholder){
   
-  # dummy data
+  # Dummy data
   if (FALSE){
-  sfdata_unchecked_errors <- sfdata_unchecked[seq(1,76, by = 10),]
-  sfdata_unchecked_errors$original_df_row <- seq(1,76, by = 10)
-  sfdata_unchecked_errors$bad_var_name <- "layer_1_concentration"
-  
-  error_df <- sfdata_unchecked_errors
-  original_df <- sfdata_unchecked
-  default_placeholder <- "NA"
+    sfdata_unchecked_errors <- sfdata_unchecked[seq(1,76, by = 10),]
+    sfdata_unchecked_errors$original_df_row <- seq(1,76, by = 10)
+    sfdata_unchecked_errors$bad_var_name <- "layer_1_concentration"
+    
+    error_df <- sfdata_unchecked_errors
+    original_df <- sfdata_unchecked
+    default_placeholder <- "NA"
   }
-  # end dummy data
+  # End dummy data
   
   
   original_df_name <- deparse(substitute(original_df)) # this might not do what I want inside a function
-  bad_variable_vector <- error_df$bad_var_name
-  bad_row_vector <- error_df$original_df_row
+  bad_variable_vector <- error_df$flag
+  bad_row_vector <- row.names(error_df)
   
   writeClipboard(paste(original_df_name,"[",bad_row_vector,",]$",bad_variable_vector," <- ", default_placeholder, sep = "", collapse = "\n"))
   
@@ -175,10 +220,9 @@ read_sfdata_metadata <- function(){
 add_sfdata_metadata <- function(my_data){
   # Dummy data
   if (FALSE){
-  my_data = test_data
+    my_data = test_data
   }
   # End dummy data
-  
   sfdatat1 <- merge(sfdata, ring_ids, by = c("ring_id", "year"))
   sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number", "year"))
   sfdatat3 <- merge(sfdatat2, start_dates, by = c("project","year"))
@@ -217,14 +261,18 @@ convert_sfdata_variable_types <- function(my_sfdata){
 
 # my_sfdata <- my_sfdata[!is.na(my_sfdata$datetime) & my_sfdata$datetime >= my_sfdata$start_date,]
 
-if(FALSE){
-average_sf_data
 
-investigate_statistical_properties
+# average_sf_data
+# 
+# investigate_statistical_properties
+# 
+# calc_sf_data_time_within_target
+# 
+# make_face_stats
 
-calc_sf_data_time_within_target
-
-make_face_stats
-}
 # TO-DO add plotting functions
 
+
+check = out_of_range_row %>%
+  group_by(Range_flag)%>%
+  summarise(n = n())
