@@ -29,6 +29,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   if (FALSE){
     source_file_location <- "\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\"
   }
+  # End dummy data
   
   myfiles <- list.files(source_file_location
                         ,pattern = "Avg"
@@ -89,7 +90,7 @@ check_sfdata_types <- function(unchecked_df){
   
   
   for(i in names(unchecked_df)){
-    my_type <- valid_range[valid_range$variable == i,"type"]
+    my_type <- valid_range[valid_range$variable == i,"type"] # valid_range needs to be passed explicitly to this and all controlling functions.
     error_row_i <- check_types_convertible(i,my_type,unchecked_df)
     
     if(nrow(error_row_i)!= 0){
@@ -137,15 +138,15 @@ check_ranges <- function(column_name,my_sfdata){
   outlier <- data.frame(cbind(my_sfdata, Range_flag = "text")) 
   outlier <- outlier[0,]
   
-  range_type <- valid_range[valid_range$variable == column_name,"type"]
+  range_type <- valid_range[valid_range$variable == column_name,"type"] # valid_range needs to be passed explicitly to this and all controlling functions.
   
   empty_return <- data.frame(cbind(my_sfdata, Range_flag = "TEXT"))
   empty_return <- empty_return[0,]
   
   if(range_type != "numeric") return(empty_return)
   
-  lower_limit <- valid_range[valid_range$variable == column_name,"lower_limit"]
-  upper_limit <- valid_range[valid_range$variable == column_name,"upper_limit"]
+  lower_limit <- valid_range[valid_range$variable == column_name,"lower_limit"] # valid_range needs to be passed explicitly to this and all controlling functions.
+  upper_limit <- valid_range[valid_range$variable == column_name,"upper_limit"] # valid_range needs to be passed explicitly to this and all controlling functions.
   
   lower_limit <- as(lower_limit,range_type)
   upper_limit <- as(upper_limit,range_type)
