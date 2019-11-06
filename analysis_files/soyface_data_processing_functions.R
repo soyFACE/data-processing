@@ -146,8 +146,8 @@ make_error_template <- function(error_df, original_df, default_placeholder){
   
   
   original_df_name <- deparse(substitute(original_df)) # this might not do what I want inside a function
-  bad_variable_vector <- error_df$bad_var_name
-  bad_row_vector <- error_df$original_df_row
+  bad_variable_vector <- error_df$flag
+  bad_row_vector <- row.names(error_df)
   
   writeClipboard(paste(original_df_name,"[",bad_row_vector,",]$",bad_variable_vector," <- ", default_placeholder, sep = "", collapse = "\n"))
   
