@@ -35,7 +35,7 @@ unconvertible_rows <- check_sfdata_types(sfdata,valid_range) ## Serch for unconv
 
 out_of_range_rows <- check_sfdata_range(sfdata,valid_range) ## Search for out of range datapoints
 
-sfdata_with_metadata <- add_sfdata_metadata(sfdata)
+sfdata_with_metadata <- add_sfdata_metadata(sfdata) ## Merge with metadata
 
 
 
