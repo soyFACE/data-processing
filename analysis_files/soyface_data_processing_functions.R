@@ -2,9 +2,11 @@
 
 ############################load data###############################
 if (FALSE){
-  load("../processed_r_data/sfdata_unchecked.rdata")
-  load("../processed_r_data/sfdata.Rdata")
-  valid_range <- read.csv("../metadata/valid_ranges.csv"
+  sfdata_without_na = sfdata[rowSums(is.na(sfdata)) != ncol(sfdata),]
+  
+  load("processed_r_data/sfdata_unchecked.rdata")
+  load("processed_r_data/sfdata.Rdata")
+  valid_range <- read.csv("metadata/valid_ranges.csv"
                           ,stringsAsFactors = FALSE
                           ,colClasses = c('character'))
   
@@ -67,7 +69,7 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
     running_total = running_total+number_of_records
   }
   
-  sfdata_header <- as.character(read.csv("metadata/minute_average_header_for_r.csv"
+  sfdata_header <- as.character(read.csv("../metadata/minute_average_header_for_r.csv"
                                          ,header = FALSE
                                          ,sep = ","
                                          ,stringsAsFactors = FALSE
@@ -79,10 +81,11 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
 }
 
 #This needs the valid ranges passed to it - JAM
-check_sfdata_types <- function(unchecked_df){
+check_sfdata_types <- function(unchecked_df,my_range){
   # Dummy data
   if (FALSE){
-    unchecked_df <- test_data
+    unchecked_df <- sfdata_without_na
+    my_range <- valid_range
   }
   # End dummy data
   error_row <- data.frame(cbind(unchecked_df, flag = "text")) 
@@ -90,7 +93,7 @@ check_sfdata_types <- function(unchecked_df){
   
   
   for(i in names(unchecked_df)){
-    my_type <- valid_range[valid_range$variable == i,"type"] # valid_range needs to be passed explicitly to this and all controlling functions.
+    my_type <- my_range[my_range$variable == i,"type"] # valid_range needs to be passed explicitly to this and all controlling functions.
     error_row_i <- check_types_convertible(i,my_type,unchecked_df)
     
     if(nrow(error_row_i)!= 0){
@@ -103,11 +106,18 @@ check_sfdata_types <- function(unchecked_df){
 }
 
 check_types_convertible <- function(columname, my_type,unchecked_df){
+  if(FALSE){
+    columname <- "wind_speed"
+    my_type <- "numeric"
+    unchecked_df <-test_data
+  }
+  
   converted_column = lapply(unchecked_df[columname], function(x) as(x,my_type))
   converted_column = data.frame(unlist(converted_column))
   converted_data = unchecked_df
-  converted_data[columname] = converted_column[,1]
-  error_row_by_column <- converted_data[is.na(converted_data[columname]),]
+  converted_data$converted_value = converted_column[,1]
+  error_row_by_column <- converted_data[is.na(converted_data$converted_value),]
+  error_row_by_column$converted_value <-  NULL
   return(error_row_by_column)
 }
 
@@ -134,19 +144,23 @@ check_sfdata_range <- function(my_df){
 
 
 
-check_ranges <- function(column_name,my_sfdata){
+check_ranges <- function(column_name,my_sfdata,){
+  if(FALSE){
+    my_range <- valid_range
+  }
+  
   outlier <- data.frame(cbind(my_sfdata, Range_flag = "text")) 
   outlier <- outlier[0,]
   
-  range_type <- valid_range[valid_range$variable == column_name,"type"] # valid_range needs to be passed explicitly to this and all controlling functions.
+  range_type <- my_range[my_range$variable == column_name,"type"] # valid_range needs to be passed explicitly to this and all controlling functions.
   
   empty_return <- data.frame(cbind(my_sfdata, Range_flag = "TEXT"))
   empty_return <- empty_return[0,]
   
   if(range_type != "numeric") return(empty_return)
   
-  lower_limit <- valid_range[valid_range$variable == column_name,"lower_limit"] # valid_range needs to be passed explicitly to this and all controlling functions.
-  upper_limit <- valid_range[valid_range$variable == column_name,"upper_limit"] # valid_range needs to be passed explicitly to this and all controlling functions.
+  lower_limit <- my_range[my_range$variable == column_name,"lower_limit"] # valid_range needs to be passed explicitly to this and all controlling functions.
+  upper_limit <- my_range[my_range$variable == column_name,"upper_limit"] # valid_range needs to be passed explicitly to this and all controlling functions.
   
   lower_limit <- as(lower_limit,range_type)
   upper_limit <- as(upper_limit,range_type)
