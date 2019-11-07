@@ -37,3 +37,5 @@ out_of_range_rows <- check_sfdata_range(sfdata,valid_range) ## Search for out of
 
 sfdata_with_metadata <- add_sfdata_metadata(sfdata)
 
+
+
