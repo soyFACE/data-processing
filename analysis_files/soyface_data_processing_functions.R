@@ -273,7 +273,3 @@ convert_sfdata_variable_types <- function(my_sfdata){
 
 # TO-DO add plotting functions
 
-
-check = out_of_range_row %>%
-  group_by(Range_flag)%>%
-  summarise(n = n())
