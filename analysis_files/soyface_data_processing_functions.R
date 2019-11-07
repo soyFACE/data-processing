@@ -51,6 +51,12 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
   sfdata$file_source <- NA
   sfdata$number_of_records <- NA
   
+  sfdata_header <- as.character(read.csv("metadata/minute_average_header_for_r.csv"
+                                         ,header = FALSE
+                                         ,sep = ","
+                                         ,stringsAsFactors = FALSE
+                                         ,colClasses = 'character')[1,])
+  
   running_total <- 0
   my_counter <- 0
   for (f in myfiles) {
@@ -68,13 +74,6 @@ raw_sfdata_avg_to_dataframe <- function(source_file_location){
     print(paste(f, number_of_records))
     running_total = running_total+number_of_records
   }
-  
-  sfdata_header <- as.character(read.csv("../metadata/minute_average_header_for_r.csv"
-                                         ,header = FALSE
-                                         ,sep = ","
-                                         ,stringsAsFactors = FALSE
-                                         ,colClasses = 'character')[1,])
-  
   
   names(sfdata) <- sfdata_header
   return(sfdata)
@@ -121,10 +120,11 @@ check_types_convertible <- function(columname, my_type,unchecked_df){
   return(error_row_by_column)
 }
 
-check_sfdata_range <- function(my_df){
+check_sfdata_range <- function(my_df,my_range){
   # Dummy Data
   if (FALSE){
     my_df <- out_of_range_data
+    my_range <-  valid_range
   }
   # End dummy data
   out_of_range_row <- data.frame(cbind(my_df, type_flag = "text")) 
@@ -132,7 +132,7 @@ check_sfdata_range <- function(my_df){
   
   for(i in names(my_df)){
     
-    out_of_range_row_i <- check_ranges(i, my_df)
+    out_of_range_row_i <- check_ranges(i, my_df,my_range)
     
     if(nrow(out_of_range_row_i)!= 0){
       out_of_range_row = rbind(out_of_range_row,out_of_range_row_i)
@@ -142,9 +142,7 @@ check_sfdata_range <- function(my_df){
   return(out_of_range_row)
 }
 
-
-
-check_ranges <- function(column_name,my_sfdata,){
+check_ranges <- function(column_name,my_sfdata,my_range){
   if(FALSE){
     my_range <- valid_range
   }
@@ -209,27 +207,28 @@ make_error_template <- function(error_df, original_df, default_placeholder){
 }
 
 read_sfdata_metadata <- function(){
-  ring_ids <- read.csv("../metadata/ring_ids.csv"
+  ring_ids <- read.csv("metadata/ring_ids.csv"
                        ,stringsAsFactors = FALSE
                        ,colClasses = 'character'
   )
   
-  projects <- read.csv("../metadata/projects.csv"
+  projects <- read.csv("metadata/projects.csv"
                        ,stringsAsFactors = FALSE
                        ,colClasses = 'character'
   )
-  start_dates <- read.csv("../metadata/start_dates.csv"
+  start_dates <- read.csv("metadata/start_dates.csv"
                           ,stringsAsFactors = FALSE
                           ,colClasses = 'character'
   )
-  end_dates <- read.csv("../metadata/end_dates.csv"
+  end_dates <- read.csv("metadata/end_dates.csv"
                         ,stringsAsFactors = FALSE
                         ,colClasses = 'character'
   )
-  fumigation_type <- read.csv("../metadata/fumigation_type.csv"
+  fumigation_type <- read.csv("metadata/fumigation_type.csv"
                               ,stringsAsFactors = FALSE
                               ,colClasses = 'character'
   )
+  
 }
 
 add_sfdata_metadata <- function(my_data){
@@ -238,8 +237,8 @@ add_sfdata_metadata <- function(my_data){
     my_data = test_data
   }
   # End dummy data
-  sfdatat1 <- merge(sfdata, ring_ids, by = c("ring_id", "year"))
-  sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number", "year"))
+  sfdatat1 <- merge(my_data, ring_ids, by = c("ring_id"))
+  sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number","year"))
   sfdatat3 <- merge(sfdatat2, start_dates, by = c("project","year"))
   sfdatat4 <- merge(sfdatat3, fumigation_type, by = c("ring_number","year"))
   sfdatat5 <- merge(sfdatat4, end_dates, by = c("fumigation_type","year"))
