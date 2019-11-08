@@ -1,5 +1,5 @@
 source("analysis_files/soyface_data_processing_functions.R")
-
+require("data.table")
 #############################Load data################################
 
 load("processed_r_data/sfdata.Rdata")
@@ -41,5 +41,7 @@ out_of_range_rows <- check_sfdata_range(sfdata,valid_range) ## Search for out of
 
 
 sfdata_with_metadata <- add_sfdata_metadata(sfdata) ## Merge with metadata (Runing time: 25.51346 secs)
+
+
 
 
