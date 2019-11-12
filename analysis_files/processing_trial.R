@@ -31,16 +31,23 @@ fumigation_type <- read.csv("metadata/fumigation_type.csv"
 ######################################################################
 ## sfdata <- raw_sfdata_avg_to_dataframe("\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\") ## Runing time 3.330841 mins
 
-sfdata <- sfdata[rowSums(is.na(sfdata)) != ncol(sfdata),] ##Delet empty row
+sfdata_without_empty <- sfdata[rowSums(is.na(sfdata)) != ncol(sfdata),] ##Delet empty row
+
+sfdata_without_wrong_date <- date_sub(409676,409795,sfdata_without_empty)
+
+unconvertible_rows <- check_sfdata_types(sfdata_without_wrong_date,valid_range) ## Serch for unconvertible datapoints (Runing time: 18.89308 secs)
+
+out_of_range_rows <- check_sfdata_range(sfdata_without_wrong_date,valid_range) ## Search for out of range datapoints  (Runing time: 52.14598 secs)
 
 
-unconvertible_rows <- check_sfdata_types(sfdata,valid_range) ## Serch for unconvertible datapoints (Runing time: 18.89308 secs)
+sfdata_type_converted <- convert_sfdata_variable_types(sfdata_without_wrong_date)
 
+sfdata_in_valid_date_range <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",sfdata_type_converted)
 
-out_of_range_rows <- check_sfdata_range(sfdata,valid_range) ## Search for out of range datapoints  (Runing time: 52.14598 secs)
-
+sfdata_fill_gaps <- find_gaps(sfdata_in_valid_date_range)
 
 sfdata_with_metadata <- add_sfdata_metadata(sfdata) ## Merge with metadata (Runing time: 25.51346 secs)
+
 
 
 

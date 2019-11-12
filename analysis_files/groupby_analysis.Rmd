@@ -6,7 +6,7 @@ output: html_document
 ---
 ## Loading required packages
 ```{r}
-require(data)
+require(data.table)
 ```
 
 
@@ -38,6 +38,7 @@ out_of_range_layer_1_setpoints_groupby_result
 ```{r}
 out_of_range_layer_2_setpoints <- data.table(out_of_range_layer_2_setpoints)
 out_of_range_layer_2_setpoints_groupby_result <- out_of_range_layer_1_setpoints[, .N, by = .(layer_2_setpoint)]
+
 out_of_range_layer_2_setpoints_groupby_result
 ```
 ## Check error value of wind direction

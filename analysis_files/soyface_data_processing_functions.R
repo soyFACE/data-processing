@@ -252,15 +252,17 @@ check_sfdata_dates <- function(sfdata){
 convert_sfdata_variable_types <- function(my_sfdata){
   
   # TO-DO check if conversion is valid
-  
+  if(FALSE){
+    my_sfdata <- sfdata
+  }
   my_sfdata$datetime <- as.POSIXct(paste(my_sfdata$dt, my_sfdata$time)
                                    ,tz = 'GMT'
                                    ,format = "%m/%d/%Y %H:%M:%S")
   my_sfdata$datetime_trunc <- as.POSIXct(paste(my_sfdata$dt, my_sfdata$time)
                                          ,tz = 'GMT'
                                          ,format = "%m/%d/%Y %H:%M")
-  my_sfdata$year <- as.character(as.POSIXlt(my_sfdata$datetime)$year+1900)
   
+  my_sfdata$year <- as.character(as.POSIXlt(my_sfdata$datetime)$year+1900)
   my_sfdata$layer_1_concentration <- as.numeric(my_sfdata$layer_1_concentration)
   my_sfdata$wind_speed <- as.numeric(my_sfdata$wind_speed)
   my_sfdata$wind_direction <- as.numeric(my_sfdata$wind_direction)
@@ -273,18 +275,56 @@ convert_sfdata_variable_types <- function(my_sfdata){
 }
 
 
+
 find_gaps <- function(my_sfdata){
   #This function requires that the datetime be truncated to minutes. i.e. drop the seconds.
+  if(FALSE){
+    my_sfdata <- sfdata_in_valid_date_range
+  }
   
-my_mins = seq(from = min(sfdata$datetime_trunc),  to = max(sfdata$datetime_trunc), by = 'min')
 
-all_mins <- data.frame(datetime_trunc = my_mins, ring_id = rep(unique(sfdata$ring_id), each = length(my_mins)))
+  min(my_sfdata$datetime_trunc)
+  max(my_sfdata$datetime_trunc)
+  
+  my_mins = seq(from = min(my_sfdata$datetime_trunc),  to = max(my_sfdata$datetime_trunc), by = 'min')
 
-sfdataday <- merge(sfdata, all_mins, by = c("ring_id",'datetime_trunc'), all.y= TRUE)
+  all_mins <- data.frame(datetime_trunc = my_mins, ring_id = rep(unique(my_sfdata$ring_id), each = length(my_mins)))
 
-return(original data frame with each minute as an empty row)
+  sfdataday <- merge(my_sfdata, all_mins, by = c("ring_id",'datetime_trunc'), all.y= TRUE)
+
+  #return(original data frame with each minute as an empty row)
 }
 
+date_sub <- function(start_row_number,end_row_number,my_sfdata){
+  if(FALSE){
+    start_row_number <-  409676
+    end_row_number <-  409795
+    my_sfdata <-  sfdata
+  }
+  correct_date <-  my_sfdata[end_row_number+1,]$dt
+  for(i in start_row_number:end_row_number){
+    my_sfdata[i,]$dt <- correct_date
+  }
+  return(my_sfdata)
+  
+}
+
+subset_by_date <- function(start_date,end_date,my_sfdata){
+  if(FALSE){
+    start_date <-  "2019-06-11,00:00:00"
+    end_date <-  "2019-09-25,23:59:59"
+    my_sfdata <-  sfdata_type_converted
+  }
+  start_date <-  as.POSIXct(start_date)
+  end_date <-  as.POSIXct(end_date)
+  
+  valid_sfdata <-  my_sfdata[which(my_sfdata$datetime >= start_date),]
+  my_sfdata <-  valid_sfdata[which(valid_sfdata$datetime <= end_date),]
+  
+  return(my_sfdata)
+  
+  
+}
 # my_sfdata <- my_sfdata[!is.na(my_sfdata$datetime) & my_sfdata$datetime >= my_sfdata$start_date,]
 
 
