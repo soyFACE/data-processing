@@ -182,7 +182,6 @@ check_ranges <- function(column_name,my_sfdata,my_range){
   
 }
 
-
 make_error_template <- function(error_df, original_df, default_placeholder){
   
   # Dummy data
@@ -232,10 +231,7 @@ read_sfdata_metadata <- function(){
 }
 
 add_sfdata_metadata <- function(my_data){
-  # Dummy data
-  if (FALSE){
-    my_data = test_data
-  }
+  
   # End dummy data
   sfdatat1 <- merge(my_data, ring_ids, by = c("ring_id"))
   sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number","year"))
@@ -274,8 +270,6 @@ convert_sfdata_variable_types <- function(my_sfdata){
   return(my_sfdata)
 }
 
-
-
 find_gaps <- function(my_sfdata){
   #This function requires that the datetime be truncated to minutes. i.e. drop the seconds.
   if(FALSE){
@@ -309,6 +303,31 @@ date_sub <- function(start_row_number,end_row_number,my_sfdata){
   
 }
 
+na_sub <- function(my_row,my_sfdata){
+  if(FALSE){
+    my_row <-  unconvertible_rows
+    my_sfdata <- sfdata_without_wrong_date
+  }
+
+  for(i in 1:nrow(my_row)){
+    
+    type <-  my_row[i,]$flag
+    my_row[i,][type] <- NA
+    
+  }
+  return(my_row)
+}
+
+
+
+out_of_range_sub <- function(flag,my_rows,my_sfdata){
+ if(FALSE){
+   my_row = out_of_range
+   my_sfdata = sfdata_without_wrong_date
+ } 
+  my_sf_data_with_flag = merge(unconvertible_rows_with_NA,sfdata_without_wrong_date,all.y = TRUE)23
+}
+
 subset_by_date <- function(start_date,end_date,my_sfdata){
   if(FALSE){
     start_date <-  "2019-06-11,00:00:00"
@@ -325,8 +344,17 @@ subset_by_date <- function(start_date,end_date,my_sfdata){
   
   
 }
-# my_sfdata <- my_sfdata[!is.na(my_sfdata$datetime) & my_sfdata$datetime >= my_sfdata$start_date,]
 
+
+subset_by_date
+
+
+
+
+
+
+
+# my_sfdata <- my_sfdata[!is.na(my_sfdata$datetime) & my_sfdata$datetime >= my_sfdata$start_date,
 
 # average_sf_data
 # 

@@ -7,6 +7,7 @@ load("processed_r_data/sfdata.Rdata")
 valid_range <- read.csv("metadata/valid_ranges.csv"
                         ,stringsAsFactors = FALSE
                         ,colClasses = c('character'))
+
 ring_ids <- read.csv("metadata/ring_ids.csv"
                      ,stringsAsFactors = FALSE
                      ,colClasses = 'character'
@@ -37,8 +38,14 @@ sfdata_without_wrong_date <- date_sub(409676,409795,sfdata_without_empty)
 
 unconvertible_rows <- check_sfdata_types(sfdata_without_wrong_date,valid_range) ## Serch for unconvertible datapoints (Runing time: 18.89308 secs)
 
+unconvertible_rows_with_NA <- na_sub(unconvertible_rows,sfdata_without_wrong_date)
+
 out_of_range_rows <- check_sfdata_range(sfdata_without_wrong_date,valid_range) ## Search for out of range datapoints  (Runing time: 52.14598 secs)
 
+##sfdata_with_NA <- merge(unconvertible_rows_with_NA,sfdata_without_wrong_date,all.y = TRUE)
+##sfdata_with_NA$flag <-  NULL
+
+unconvertible_rows_test <- check_sfdata_types(sfdata_without_wrong_date,valid_range) 
 
 sfdata_type_converted <- convert_sfdata_variable_types(sfdata_without_wrong_date)
 
@@ -49,6 +56,6 @@ sfdata_fill_gaps <- find_gaps(sfdata_in_valid_date_range)
 sfdata_with_metadata <- add_sfdata_metadata(sfdata) ## Merge with metadata (Runing time: 25.51346 secs)
 
 
+check <- out_of_range_rows[which(out_of_range_rows$Range_flag == "wind_direction"),]
 
-
-
+check2 <-  out_of_range_rows[which(out_of_range_rows$Range_flag == "layer_1_concentration"),]
