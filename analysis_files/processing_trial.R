@@ -58,6 +58,7 @@ sfdata_without_wrong_date$layer_2_setpoint <-  0
 check <- out_of_range_rows[which(out_of_range_rows$Range_flag == "wind_direction"),]
 check2 <-  out_of_range_rows[which(out_of_range_rows$Range_flag == "layer_1_concentration"),]
 check2 <-  check2[order(check2$ring_id),]
+write.csv(check2,'out_of_range_layer1_con.csv')
 ##sfdata_with_NA <- merge(unconvertible_rows_with_NA,sfdata_without_wrong_date,all.y = TRUE)
 ##sfdata_with_NA$flag <-  NULL
 

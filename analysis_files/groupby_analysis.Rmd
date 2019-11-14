@@ -27,7 +27,7 @@ out_of_range_layer_1_concentration_groupby_result <- out_of_range_layer_1_con[, 
 
 data.frame(out_of_range_layer_1_concentration_groupby_result[order(-out_of_range_layer_1_concentration_groupby_result$N),])
 
-out_of_range_layer_1_concentration_groupby_result[order(-out_of_range_layer_1_concentration_groupby_result$ring_id),]
+df <- out_of_range_layer_1_concentration_groupby_result[order(-out_of_range_layer_1_concentration_groupby_result$ring_id),]
 
 ```
 
