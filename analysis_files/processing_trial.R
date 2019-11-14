@@ -32,7 +32,6 @@ fumigation_type <- read.csv("metadata/fumigation_type.csv"
 ######################################################################
 ## sfdata <- raw_sfdata_avg_to_dataframe("\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\") ## Runing time 3.330841 mins
 
-
 # Evaluate
 sfdata_without_empty <- sfdata[rowSums(is.na(sfdata)) != ncol(sfdata),] ##Delet empty row
 # /Evaluate
@@ -61,8 +60,6 @@ check2 <-  out_of_range_rows[which(out_of_range_rows$Range_flag == "leaf_wetness
 
 ##sfdata_with_NA <- merge(unconvertible_rows_with_NA,sfdata_without_wrong_date,all.y = TRUE)
 ##sfdata_with_NA$flag <-  NULL
-
-unconvertible_rows_test <- check_sfdata_types(sfdata_without_wrong_date,valid_range) 
 
 sfdata_type_converted <- convert_sfdata_variable_types(sfdata_without_wrong_date)
 

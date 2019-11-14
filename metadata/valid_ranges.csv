@@ -11,7 +11,7 @@ year,variable,lower_limit,upper_limit,type
 2019,year,2019,2019,character
 2019,sector,1,8,numeric
 2019,O3_on,0,1,numeric
-2019,leaf_wetness,0,5,numeric
+2019,leaf_wetness,0,10.5,numeric
 2019,reporting_type,M,M,character
 2019,ring_id,0,16,numeric
 2019,time,,,character
