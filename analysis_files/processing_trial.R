@@ -1,7 +1,7 @@
 source("analysis_files/soyface_data_processing_functions.R")
-require("data.table")
-#############################Load data################################
 
+#############################Load data################################
+load("processed_r_data/out_of_range_rows.R")
 load("processed_r_data/sfdata.Rdata")
 
 valid_range <- read.csv("metadata/valid_ranges.csv"
