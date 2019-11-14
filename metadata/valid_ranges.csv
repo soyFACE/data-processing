@@ -1,6 +1,6 @@
 year,variable,lower_limit,upper_limit,type
 2019,wind_speed,-1,30,numeric
-2019,wind_direction,0,360,numeric
+2019,wind_direction,-7,367,numeric
 2019,layer_1_vout,0,10,numeric
 2019,layer_1_concentration,-10,1000,numeric
 2019,layer_1_setpoint,0,600,numeric

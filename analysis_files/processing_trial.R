@@ -51,8 +51,8 @@ out_of_range_rows <- check_sfdata_range(sfdata_without_wrong_date,valid_range) #
 
 
 check <- out_of_range_rows[which(out_of_range_rows$Range_flag == "wind_direction"),]
-
-check2 <-  out_of_range_rows[which(out_of_range_rows$Range_flag == "layer_1_concentration"),]
+check2 <-  out_of_range_rows[which(out_of_range_rows$Range_flag == "layer_2_setpoint"),]
+selectedRows <- check2[-grep("Ambient", check2$file_source), ]
 
 
 ##sfdata_with_NA <- merge(unconvertible_rows_with_NA,sfdata_without_wrong_date,all.y = TRUE)
