@@ -48,7 +48,7 @@ unconvertible_rows_with_NA <- na_sub(unconvertible_rows,sfdata_without_wrong_dat
 
 # Evaluate
 out_of_range_rows <- check_sfdata_range(sfdata_without_wrong_date,valid_range) ## Search for out of range datapoints  (Runing time: 52.14598 secs)
-# save(out_of_range_rows, file = "processed_r_data/out_of_range_rows.Rdata")
+save(out_of_range_rows, file = "processed_r_data/out_of_range_rows.Rdata")
 # /Evaluate
 #Fix
 sfdata_without_wrong_date$layer_2_concentration <-  0
@@ -56,8 +56,8 @@ sfdata_without_wrong_date$layer_2_setpoint <-  0
 # /Fix
 
 check <- out_of_range_rows[which(out_of_range_rows$Range_flag == "wind_direction"),]
-check2 <-  out_of_range_rows[which(out_of_range_rows$Range_flag == "leaf_wetness"),]
-
+check2 <-  out_of_range_rows[which(out_of_range_rows$Range_flag == "layer_1_concentration"),]
+check2 <-  check2[order(check2$ring_id),]
 ##sfdata_with_NA <- merge(unconvertible_rows_with_NA,sfdata_without_wrong_date,all.y = TRUE)
 ##sfdata_with_NA$flag <-  NULL
 

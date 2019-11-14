@@ -23,9 +23,12 @@ out_of_range_groupby_result
 ```{r}
 out_of_range_layer_1_con <- data.table(out_of_range_layer_1_con)
 
-out_of_range_layer_1_concentration_groupby_result <- out_of_range_layer_1_con[, .N, by = .(layer_1_concentration)]
+out_of_range_layer_1_concentration_groupby_result <- out_of_range_layer_1_con[, .N, by = .(ring_id,dt)]
 
 data.frame(out_of_range_layer_1_concentration_groupby_result[order(-out_of_range_layer_1_concentration_groupby_result$N),])
+
+out_of_range_layer_1_concentration_groupby_result[order(-out_of_range_layer_1_concentration_groupby_result$ring_id),]
+
 ```
 
 ## Check error value of wind direction
