@@ -325,7 +325,7 @@ out_of_range_sub <- function(flag,my_rows,my_sfdata){
    my_row = out_of_range
    my_sfdata = sfdata_without_wrong_date
  } 
-  my_sf_data_with_flag = merge(unconvertible_rows_with_NA,sfdata_without_wrong_date,all.y = TRUE)23
+  my_sf_data_with_flag = merge(unconvertible_rows_with_NA,sfdata_without_wrong_date,all.y = TRUE)
 }
 
 subset_by_date <- function(start_date,end_date,my_sfdata){
