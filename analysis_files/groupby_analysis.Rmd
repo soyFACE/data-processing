@@ -13,13 +13,9 @@ require(data.table)
 ## Group out of range and unconvertible datapoints by flag 
 ```{r}
 out_of_range_rows_table <- data.table(out_of_range_rows)
-unconvertible_rows_table <- data.table(unconvertible_rows)
 out_of_range_groupby_result <-  out_of_range_rows_table[, .N, by = .(Range_flag)] 
-unconvertible_groupby_result <- unconvertible_rows_table[, .N, by = .(flag)]
-out_of_range_layer_2_setpoints <- out_of_range_rows[which(out_of_range_rows$Range_flag == "layer_2_setpoint"),]
 out_of_range_wind_direction <-  out_of_range_rows[which(out_of_range_rows$Range_flag == "wind_direction"),]
 out_of_range_layer_1_con <- out_of_range_rows[which(out_of_range_rows$Range_flag == "layer_1_concentration"),]
-out_of_range_layer_2_con <- out_of_range_rows[which(out_of_range_rows$Range_flag == "layer_2_concentration"),]
 out_of_range_groupby_result
 ```
 
@@ -32,24 +28,9 @@ out_of_range_layer_1_concentration_groupby_result <- out_of_range_layer_1_con[, 
 data.frame(out_of_range_layer_1_concentration_groupby_result[order(-out_of_range_layer_1_concentration_groupby_result$N),])
 ```
 
-## Check error values of layer_2_setpoints
-```{r}
-out_of_range_layer_2_setpoints <- data.table(out_of_range_layer_2_setpoints)
-out_of_range_layer_2_setpoints_groupby_result <- out_of_range_layer_2_setpoints[, .N, by = .(layer_2_setpoint)]
-out_of_range_layer_2_setpoints_groupby_result
-```
 ## Check error value of wind direction
 ```{r}
 out_of_range_wd <- data.table(out_of_range_wind_direction)
 out_of_range_wd_groupby_result <- out_of_range_wd[, .N, by = .(wind_direction)]
 out_of_range_wd_groupby_result
 ```
-```{r}
-out_of_range_layer_2_con <- data.table(out_of_range_layer_2_con)
-
-out_of_range_layer_2_concentration_groupby_result <- out_of_range_layer_2_con[, .N, by = .(layer_2_concentration)]
-
-data.frame(out_of_range_layer_2_concentration_groupby_result[order(-out_of_range_layer_2_concentration_groupby_result$N),])
-```
-
-
