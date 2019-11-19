@@ -2272,7 +2272,7 @@
 467766,M,4,9/5/2019,5:29:04,0,-11,100,0,0,0,0,315,1,0,2,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R18/Avg_090519.csv,1439,layer_1_concentration,JAM,0 or ambient,negative values when ozone is very low
 467767,M,4,9/5/2019,5:30:04,0,-11,100,0,0,0,0,310,1,0,2,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R18/Avg_090519.csv,1439,layer_1_concentration,JAM,0 or ambient,negative values when ozone is very low
 467768,M,4,9/5/2019,5:31:04,0,-11,100,0,0,0,0,295,1,0,2,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R18/Avg_090519.csv,1439,layer_1_concentration,JAM,0 or ambient,negative values when ozone is very low
-480407,M,4,9/14/2019,22:54:42,0,-11,100,0,0,0,0.7,148,6,0,2,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R18/Avg_091419.csv,1218,layer_1_concentration,,,
+480407,M,4,9/14/2019,22:54:42,0,-11,100,0,0,0,0.7,148,6,0,2,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R18/Avg_091419.csv,1218,layer_1_concentration,YF,0 or ambient,negative values when ozone is very low
 481222,M,4,6/10/2019,12:41:04,0,-23,100,0,0,0,8.3,149,1,0,2,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R22/Avg_061019.csv,748,layer_1_concentration,,,
 481223,M,4,6/10/2019,12:42:04,0,-23,100,0,0,0,8.3,129,1,0,2,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R22/Avg_061019.csv,748,layer_1_concentration,,,
 481224,M,4,6/10/2019,12:43:04,0,-23,100,0,0,0,10.2,125,1,0,2,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R22/Avg_061019.csv,748,layer_1_concentration,,,
