@@ -34,7 +34,7 @@ fumigation_type <- read.csv("metadata/fumigation_type.csv"
 )
 ######################################################################
 
-sfdata <- raw_sfdata_avg_to_dataframe("\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\") ## Runing time 3.330841 mins
+#sfdata <- raw_sfdata_avg_to_dataframe("\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\") ## Runing time 3.330841 mins
 #save(sfdata, file = "processed_r_data/sfdata.Rdata")
 # Evaluate
 sfdata_without_empty <- sfdata[rowSums(is.na(sfdata)) != ncol(sfdata),] ##Delet empty row
@@ -48,6 +48,9 @@ unconvertible_rows <- check_sfdata_types(sfdata_without_wrong_date,valid_range) 
 # /Evaluate
 # Fix
 unconvertible_rows_with_NA <- na_sub(unconvertible_rows,sfdata_without_wrong_date)
+sfdata_type_converted <- convert_sfdata_variable_types(sfdata_without_wrong_date)
+sfdata_in_valid_date_range <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",sfdata_type_converted)
+save(sfdata_in_valid_date_range, file = "processed_r_data/sfdata_in_valid_date_range.Rdata")
 # /Fix
 
 # Evaluate
@@ -65,9 +68,8 @@ sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata
 ##sfdata_with_NA <- merge(unconvertible_rows_with_NA,sfdata_without_wrong_date,all.y = TRUE)
 ##sfdata_with_NA$flag <-  NULL
 
-sfdata_type_converted <- convert_sfdata_variable_types(sfdata_without_wrong_date)
 
-sfdata_in_valid_date_range <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",sfdata_type_converted)
+
 sfdata_with_metadata_without_trunc <- add_sfdata_metadata(sfdata_in_valid_date_range)
 
 
