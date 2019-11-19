@@ -351,7 +351,17 @@ fix_out_of_range <- function(my_csv,my_sfdata){
     my_sfdata <- sfdata_without_wrong_date
   }
   
+  ambian_subset <- my_sfdata[which(my_sfdata$ring_id == 16),]
+  
+  
+  
   for(i in 1:nrow(my_csv)){
+    if(my_csv[i,]$replacement_value == "0 or ambiant"){
+      ambian_date_subset <-  ambian_subset[which(ambian_subset$df == my_csv[i,]),]
+      
+      next 
+    }
+    
     temp_row_index <- my_csv[i,]$X
     my_sfdata[temp_row_index,]$layer_1_concentration <- my_csv[i,]$replacement_value
   }
