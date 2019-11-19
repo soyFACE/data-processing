@@ -131,9 +131,8 @@ check_sfdata_range <- function(my_df,my_range){
   out_of_range_row <- out_of_range_row[0,]
   
   for(i in names(my_df)){
-    
+    if(i == "datetime"|i == "datetime_trunc"){next}
     out_of_range_row_i <- check_ranges(i, my_df,my_range)
-    
     if(nrow(out_of_range_row_i)!= 0){
       out_of_range_row = rbind(out_of_range_row,out_of_range_row_i)
     }
@@ -146,6 +145,7 @@ check_ranges <- function(column_name,my_sfdata,my_range){
   if(FALSE){
     my_range <- valid_range
   }
+  
   
   outlier <- data.frame(cbind(my_sfdata, Range_flag = "text")) 
   outlier <- outlier[0,]

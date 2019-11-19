@@ -50,16 +50,16 @@ unconvertible_rows <- check_sfdata_types(sfdata_without_wrong_date,valid_range) 
 unconvertible_rows_with_NA <- na_sub(unconvertible_rows,sfdata_without_wrong_date)
 sfdata_type_converted <- convert_sfdata_variable_types(sfdata_without_wrong_date)
 sfdata_in_valid_date_range <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",sfdata_type_converted)
-save(sfdata_in_valid_date_range, file = "processed_r_data/sfdata_in_valid_date_range.Rdata")
+#save(sfdata_in_valid_date_range, file = "processed_r_data/sfdata_in_valid_date_range.Rdata")
 # /Fix
 
 # Evaluate
-out_of_range_rows <- check_sfdata_range(sfdata_without_wrong_date,valid_range) ## Search for out of range datapoints  (Runing time: 52.14598 secs)
-#save(out_of_range_rows, file = "processed_r_data/out_of_range_rows.Rdata")
+#out_of_range_rows <- check_sfdata_range(sfdata_in_valid_date_range,valid_range) ## Search for out of range datapoints  (Runing time: 52.14598 secs)
+save(out_of_range_rows, file = "processed_r_data/out_of_range_rows.Rdata")
 # /Evaluate
 #Fix
-sfdata_without_wrong_date$layer_2_concentration <-  0
-sfdata_without_wrong_date$layer_2_setpoint <-  0
+sfdata_in_valid_date_range$layer_2_concentration <-  0
+sfdata_in_valid_date_range$layer_2_setpoint <-  0
 sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_without_wrong_date)
 
 # /Fix
@@ -71,8 +71,6 @@ sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata
 
 
 sfdata_with_metadata_without_trunc <- add_sfdata_metadata(sfdata_in_valid_date_range)
-
-
 sfdata_fill_gaps <- find_gaps(sfdata_in_valid_date_range)
 #save(sfdata_fill_gaps, file = "processed_r_data/sfdata_fill_gaps.Rdata")
 
