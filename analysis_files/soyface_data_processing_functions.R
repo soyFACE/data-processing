@@ -346,11 +346,17 @@ subset_by_date <- function(start_date,end_date,my_sfdata){
 }
 
 fix_out_of_range <- function(my_csv,my_sfdata){
-  if(FALSE)
-  {
-    my_csv <- 
-    my_sfdata <- sfdata_with_metadata
+  if(FALSE){
+    my_csv <- out_of_range_conentration
+    my_sfdata <- sfdata_without_wrong_date
   }
+  
+  for(i in 1:nrow(my_csv)){
+    temp_row_index <- my_csv[i,]$X
+    my_sfdata[temp_row_index,]$layer_1_concentration <- my_csv[i,]$replacement_value
+  }
+  
+  return(my_sfdata)
 }
 
 

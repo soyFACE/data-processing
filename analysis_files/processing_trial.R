@@ -11,6 +11,9 @@ valid_range <- read.csv("metadata/valid_ranges.csv"
                         ,stringsAsFactors = FALSE
                         ,colClasses = c('character'))
 
+out_of_range_conentration <- read.csv("out_of_range_layer1_concentration.csv"
+                                      ,stringsAsFactors = FALSE)
+
 ring_ids <- read.csv("metadata/ring_ids.csv"
                      ,stringsAsFactors = FALSE
                      ,colClasses = 'character'
@@ -56,6 +59,8 @@ out_of_range_rows <- check_sfdata_range(sfdata_without_wrong_date,valid_range) #
 #Fix
 sfdata_without_wrong_date$layer_2_concentration <-  0
 sfdata_without_wrong_date$layer_2_setpoint <-  0
+sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_without_wrong_date)
+
 # /Fix
 
 #write.csv(check2,'out_of_range_layer1_con.csv')
