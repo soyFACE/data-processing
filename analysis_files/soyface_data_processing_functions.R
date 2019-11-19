@@ -345,9 +345,13 @@ subset_by_date <- function(start_date,end_date,my_sfdata){
   
 }
 
-subset_by_date
-
-
+fix_out_of_range <- function(my_csv,my_sfdata){
+  if(FALSE)
+  {
+    my_csv <- 
+    my_sfdata <- sfdata_with_metadata
+  }
+}
 
 
 
