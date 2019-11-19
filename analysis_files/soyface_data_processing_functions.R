@@ -231,13 +231,15 @@ read_sfdata_metadata <- function(){
 }
 
 add_sfdata_metadata <- function(my_data){
-  
+  if(FALSE){
+    my_data = sfdata_fill_gaps
+  }
   # End dummy data
-  sfdatat1 <- merge(my_data, ring_ids, by = c("ring_id"))
-  sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number","year"))
-  sfdatat3 <- merge(sfdatat2, start_dates, by = c("project","year"))
-  sfdatat4 <- merge(sfdatat3, fumigation_type, by = c("ring_number","year"))
-  sfdatat5 <- merge(sfdatat4, end_dates, by = c("fumigation_type","year"))
+  sfdatat1 <- merge(my_data, ring_ids, by = c("ring_id","year"),all = TRUE)
+  sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number","year"),all = TRUE)
+  sfdatat3 <- merge(sfdatat2, start_dates, by = c("project","year"),all = TRUE)
+  sfdatat4 <- merge(sfdatat3, fumigation_type, by = c("ring_number","year"),all = TRUE)
+  sfdatat5 <- merge(sfdatat4, end_dates, by = c("fumigation_type","year"),all = TRUE)
   return(sfdatat5)
 }
 
@@ -318,8 +320,6 @@ na_sub <- function(my_row,my_sfdata){
   return(my_row)
 }
 
-
-
 out_of_range_sub <- function(flag,my_rows,my_sfdata){
  if(FALSE){
    my_row = out_of_range
@@ -344,7 +344,6 @@ subset_by_date <- function(start_date,end_date,my_sfdata){
   
   
 }
-
 
 subset_by_date
 
