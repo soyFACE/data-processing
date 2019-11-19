@@ -80,6 +80,7 @@ o3dataday <- sfdata_with_metadata[!sfdata_with_metadata$ring_id %in% c(0,1,2,3),
 co2dataday <- sfdata_with_metadata[sfdata_with_metadata$ring_id %in% c(0,1,2,3),]
 
 co2dataday_df <- co2dataday[order(co2dataday$ring_id,co2dataday$datetime_trunc),]
+o3dataday_df <- o3dataday[order(o3dataday$ring_id,o3dataday$datetime_trunc),]
 
 pdf("2019_Co2_Rings_daily.pdf", height = 8.5, width = 11)
 
@@ -119,44 +120,40 @@ dev.off()
 
 
 
-pdf("2019_Co2_Rings_daily_gaps_showns.pdf", height = 8.5, width = 11)
+pdf("2019_O3_Rings_daily.pdf", height = 8.5, width = 11)
 
-by(co2dataday, co2dataday$dt, FUN = function(x){
+by(o3dataday_df, o3dataday_df$dt, FUN = function(x){
   
   par(mfrow=c(4,1), mar =  c(1, 2, 2, 1) + 0.1)
   
   by(x,x$ring_id, FUN = function(y){
     
-    plot(y$datetime_trunc, y$co2_ppm, type = 'b'
+    plot(y$datetime, y$layer_1_concentration, type = 'b'
          
          ,ylim = c(0,1000)
          
          ,main = paste(unique(y$ring_number),unique(y$dt))
          
-         ,cex = .8
-         
     )
-    
-    points(y$datetime_trunc, y$wind_speed*100
+    points(y$datetime, y$wind_speed*100
            
            ,col = 'purple'
            
-           ,cex = .8)
+           ,pch = 10)
     
-    lines(y$datetime_trunc, y$vout*100
+    lines(y$datetime, y$layer_1_vout*100
           
-          ,col = 'red'
-          
-          ,type = 'b'
-          
-          ,cex = .2)
+          ,col = 'red')
     
-    abline(h = 600, lty = 2)
+    abline(h = 600, col = 'blue', lty = 2)
+    
+    abline(h = c(480,720), col = 'blue', lty = 4)
     
   })
   
 }
 
 )
-
 dev.off()
+
+
