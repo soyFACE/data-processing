@@ -1,13 +1,8 @@
 source("analysis_files/soyface_data_processing_functions.R")
 
-##hi
-## hey
 #############################Load data################################
-load("processed_r_data/out_of_range_rows.Rdata")
+######################################################################
 load("processed_r_data/sfdata.Rdata")
-load("processed_r_data/sfdata_without_wrong_date.Rdata")
-load("processed_r_data/sfdata_fill_gaps.Rdata")
-load("processed_r_data/sfdata_with_metadata.Rdata")
 
 valid_range <- read.csv("metadata/valid_ranges.csv"
                         ,stringsAsFactors = FALSE
@@ -38,13 +33,14 @@ fumigation_type <- read.csv("metadata/fumigation_type.csv"
                             ,colClasses = 'character'
 )
 ######################################################################
-sfdata <- raw_sfdata_avg_to_dataframe("\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\") ## Runing time 3.330841 mins
 
+sfdata <- raw_sfdata_avg_to_dataframe("\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\") ## Runing time 3.330841 mins
+#save(sfdata, file = "processed_r_data/sfdata.Rdata")
 # Evaluate
 sfdata_without_empty <- sfdata[rowSums(is.na(sfdata)) != ncol(sfdata),] ##Delet empty row
 # /Evaluate
 # Fix
-sfdata_without_wrong_date <- date_sub(409676,409795,sfdata_without_empty)
+sfdata_without_wrong_date <- date_sub(522055,522174,sfdata_without_empty)
 #save(sfdata_without_wrong_date, file = "processed_r_data/sfdata_without_wrong_date.Rdata")
 # /Fix
 # Evaluate
