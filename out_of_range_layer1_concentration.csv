@@ -1054,11 +1054,11 @@
 117352,M,1,7/26/2019,4:15:35,0,1026,600,0,0,0,0,97,5,0,1.76,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_072619.csv,1419,layer_1_concentration,YF,1026,real high values at night
 117353,M,1,7/26/2019,4:16:35,0,1016,600,0,0,0,0,98,5,0,1.74,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_072619.csv,1419,layer_1_concentration,YF,1016,real high values at night
 117354,M,1,7/26/2019,4:17:35,0,1015,600,0,0,0,0,99,5,0,1.76,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_072619.csv,1419,layer_1_concentration,YF,1015,real high values at night
-121663,M,1,7/30/2019,13:55:34,9.65,1094,600,0,0,0,2.2,334,8,0,3.55,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_073019.csv,999,layer_1_concentration,,,
-121672,M,1,7/30/2019,14:04:34,10,1018,600,0,0,0,2,7,1,0,3.63,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_073019.csv,999,layer_1_concentration,,,
-121676,M,1,7/30/2019,14:08:34,10,1033,600,0,0,0,2.5,22,1,0,3.64,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_073019.csv,999,layer_1_concentration,,,
-121677,M,1,7/30/2019,14:09:34,10,1077,600,0,0,0,2.2,358,1,0,3.6,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_073019.csv,999,layer_1_concentration,,,
-121681,M,1,7/30/2019,14:13:34,10,1006,600,0,0,0,1,359,1,0,3.63,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_073019.csv,999,layer_1_concentration,,,
+121663,M,1,7/30/2019,13:55:34,9.65,1094,600,0,0,0,2.2,334,8,0,3.55,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_073019.csv,999,layer_1_concentration,YF,1094,Normal high value less than 1100
+121672,M,1,7/30/2019,14:04:34,10,1018,600,0,0,0,2,7,1,0,3.63,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_073019.csv,999,layer_1_concentration,YF,1018,Normal high value less than 1100
+121676,M,1,7/30/2019,14:08:34,10,1033,600,0,0,0,2.5,22,1,0,3.64,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_073019.csv,999,layer_1_concentration,YF,1033,Normal high value less than 1100
+121677,M,1,7/30/2019,14:09:34,10,1077,600,0,0,0,2.2,358,1,0,3.6,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_073019.csv,999,layer_1_concentration,YF,1077,Normal high value less than 1100
+121681,M,1,7/30/2019,14:13:34,10,1006,600,0,0,0,1,359,1,0,3.63,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R14/Avg_073019.csv,999,layer_1_concentration,YF,1006,Normal high value less than 1100
 317667,M,3,7/3/2019,15:02:04,0,-426,600,0,0,0,7.1,203,5,0,0.01,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R16/Avg_070319.csv,898,layer_1_concentration,YF,NA,Box was turned off
 296388,M,3,6/18/2019,14:54:00,2.88,1039,600,0,0,0,2,314,8,0,0.01,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R16/Avg_061819.csv,1439,layer_1_concentration,YF,1039,Normal high value less than 1100
 296389,M,3,6/18/2019,14:55:00,2.33,1037,600,0,0,0,1.3,312,8,0,0.01,\\commons2.life.illinois.edu\soyface_fumigation_data\2019\/raw_data/R16/Avg_061819.csv,1439,layer_1_concentration,YF,1037,Normal high value less than 1100
