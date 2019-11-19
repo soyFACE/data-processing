@@ -65,6 +65,8 @@ sfdata_without_wrong_date$layer_2_setpoint <-  0
 sfdata_type_converted <- convert_sfdata_variable_types(sfdata_without_wrong_date)
 
 sfdata_in_valid_date_range <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",sfdata_type_converted)
+sfdata_with_metadata_without_trunc <- add_sfdata_metadata(sfdata_in_valid_date_range)
+
 
 sfdata_fill_gaps <- find_gaps(sfdata_in_valid_date_range)
 #save(sfdata_fill_gaps, file = "processed_r_data/sfdata_fill_gaps.Rdata")
@@ -72,15 +74,16 @@ sfdata_fill_gaps <- find_gaps(sfdata_in_valid_date_range)
 sfdata_with_metadata <- add_sfdata_metadata(sfdata_fill_gaps) 
 #save(sfdata_with_metadata, file = "processed_r_data/sfdata_with_metadata.Rdata")
 
+
 ###################################################################################
 o3dataday <- sfdata_with_metadata[!sfdata_with_metadata$ring_id %in% c(0,1,2,3),]
 co2dataday <- sfdata_with_metadata[sfdata_with_metadata$ring_id %in% c(0,1,2,3),]
 
-co2dataday = co2dataday[order(co2dataday$datetime),]
+co2dataday_df <- co2dataday[order(co2dataday$ring_id,co2dataday$datetime_trunc),]
 
 pdf("2019_Co2_Rings_daily.pdf", height = 8.5, width = 11)
 
-by(co2dataday, co2dataday$dt, FUN = function(x){
+by(co2dataday_df, co2dataday_df$dt, FUN = function(x){
   
   par(mfrow=c(4,1), mar =  c(1, 2, 2, 1) + 0.1)
   
@@ -93,12 +96,11 @@ by(co2dataday, co2dataday$dt, FUN = function(x){
          ,main = paste(unique(y$ring_number),unique(y$dt))
          
     )
-    
-    points(y$datetime, y$sector*100
+    points(y$datetime, y$wind_speed*100
            
            ,col = 'purple'
            
-           ,pch = 15)
+           ,pch = 10)
     
     lines(y$datetime, y$layer_1_vout*100
           
