@@ -111,10 +111,9 @@ check_types_convertible <- function(columname, my_type,unchecked_df){
     unchecked_df <-test_data
   }
   
-  converted_column = lapply(unchecked_df[columname], function(x) as(x,my_type))
-  converted_column = data.frame(unlist(converted_column))
+  converted_column = lapply(unchecked_df[columname], FUN = function(x){as(x,my_type)})[[1]]
   converted_data = unchecked_df
-  converted_data$converted_value = converted_column[,1]
+  converted_data$converted_value = converted_column
   error_row_by_column <- converted_data[is.na(converted_data$converted_value),]
   error_row_by_column$converted_value <-  NULL
   return(error_row_by_column)
@@ -131,8 +130,9 @@ check_sfdata_range <- function(my_df,my_range){
   out_of_range_row <- out_of_range_row[0,]
   
   for(i in names(my_df)){
-    if(i == "datetime"|i == "datetime_trunc"){next}
+    
     out_of_range_row_i <- check_ranges(i, my_df,my_range)
+    
     if(nrow(out_of_range_row_i)!= 0){
       out_of_range_row = rbind(out_of_range_row,out_of_range_row_i)
     }
@@ -145,7 +145,6 @@ check_ranges <- function(column_name,my_sfdata,my_range){
   if(FALSE){
     my_range <- valid_range
   }
-  
   
   outlier <- data.frame(cbind(my_sfdata, Range_flag = "text")) 
   outlier <- outlier[0,]
@@ -235,7 +234,7 @@ add_sfdata_metadata <- function(my_data){
     my_data = sfdata_fill_gaps
   }
   # End dummy data
-  sfdatat1 <- merge(my_data, ring_ids, by = c("ring_id","year"),all = TRUE)
+  sfdatat1 <- merge(my_data, ring_ids, by = c("ring_id","year"),all = TRUE) # JAM Need to add year when filling the gaps, otherwise this breaks.
   sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number","year"),all = TRUE)
   sfdatat3 <- merge(sfdatat2, start_dates, by = c("project","year"),all = TRUE)
   sfdatat4 <- merge(sfdatat3, fumigation_type, by = c("ring_number","year"),all = TRUE)
@@ -345,6 +344,7 @@ subset_by_date <- function(start_date,end_date,my_sfdata){
   
 }
 
+
 fix_out_of_range <- function(my_csv,my_sfdata){
   if(FALSE){
     my_csv <- out_of_range_conentration
@@ -368,6 +368,9 @@ fix_out_of_range <- function(my_csv,my_sfdata){
   
   return(my_sfdata)
 }
+subset_by_date
+
+
 
 
 
