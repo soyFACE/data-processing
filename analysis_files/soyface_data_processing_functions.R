@@ -358,10 +358,13 @@ fix_out_of_range <- function(my_csv,my_sfdata){
 
   
   for(i in 1:nrow(my_csv_need_ambient)){
-    ambient_subset_i <-  ambient_subset[which(ambient_subset$dt == my_csv_need_ambient[i,]$dt),]
-    ambient_subset_i <- ambient_subset_i[which(ambient_subset_i$time == my_csv_need_ambient[i,]$time),]
-    temp_row_index <- my_csv_need_ambient[i,]$X
-    my_sfdata[temp_row_index,]$layer_1_concentration <- ambient_subset_i$layer_1_concentration
+    temp_dt <- my_csv_need_ambient[i,]$dt
+    temp_time <- my_csv_need_ambient[i,]$time
+    
+    ambient_subset_i <-  ambient_subset[which(ambient_subset$dt == temp_dt),]
+    ambient_subset_i <- ambient_subset_i[which(ambient_subset_i$time == temp_dt),]
+   
+    my_sfdata[which(my_sfdata$dt == temp_dt & my_sfdata$time == temp_time),]$layer_1_concentration <- ambient_subset_i$layer_1_concentration
   }
   
   ##Deal with other out of range
@@ -376,7 +379,20 @@ fix_out_of_range <- function(my_csv,my_sfdata){
 }
 
 
-
+create_groupby_csv <- function(my_rows){
+  if(FALSE){
+    my_rows <- out_of_range_rows
+  }
+  library(data.table)
+  out_of_range_rows_table <- data.table(my_rows)
+  
+  out_of_range_groupby_result <-  out_of_range_rows_table[, .N, by = .(Range_flag)] 
+  out_of_range_wind_direction <-  out_of_range_rows[which(out_of_range_rows$Range_flag == "wind_direction"),]
+  out_of_range_layer_1_con <- out_of_range_rows[which(out_of_range_rows$Range_flag == "layer_1_concentration"),]
+  out_of_range_wind_direction <- data.frame(out_of_range_wind_direction)
+  out_of_range_layer_1_con <- data.frame(out_of_range_layer_1_con)
+  write.csv(out_of_range_wind_direction,"out_of_range/out_of_range_wind_direction.csv")
+}
 
 
 

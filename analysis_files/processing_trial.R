@@ -52,12 +52,11 @@ sfdata_fill_gaps <- fill_gaps(sfdata_in_valid_date_range)
 
 sfdata_fill_gaps$layer_2_setpoint <-  0
 out_of_range_rows <- check_sfdata_range(sfdata_fill_gaps,valid_range)
-
+create_groupby_csv(out_of_range_rows)
 
 start = Sys.time()
 sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_without_wrong_date)
 end = Sys.time()
-
 end - start
 
 sfdata_with_metadata <- add_sfdata_metadata(sfdata_fill_gaps) 
