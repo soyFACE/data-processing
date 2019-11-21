@@ -47,7 +47,6 @@ sfdata_without_wrong_date <- date_sub(522055,522174,sfdata_without_empty)
 unconvertible_rows <- check_sfdata_types(sfdata_without_wrong_date,valid_range) ## Serch for unconvertible datapoints (Runing time: 18.89308 secs)
 # /Evaluate
 # Fix
-unconvertible_rows_with_NA <- na_sub(unconvertible_rows,sfdata_without_wrong_date) # JAM: How is this different from the type conversion function?
 sfdata_type_converted <- convert_sfdata_variable_types(sfdata_without_wrong_date)
 sfdata_in_valid_date_range <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",sfdata_type_converted)
 #save(sfdata_in_valid_date_range, file = "processed_r_data/sfdata_in_valid_date_range.Rdata")
@@ -55,23 +54,14 @@ sfdata_in_valid_date_range <- subset_by_date("2019-06-11,00:00:00","2019-09-25,2
 
 # Evaluate
 #out_of_range_rows <- check_sfdata_range(sfdata_in_valid_date_range,valid_range) ## Search for out of range datapoints  (Runing time: 52.14598 secs)
-save(out_of_range_rows, file = "processed_r_data/out_of_range_rows.Rdata")
+#save(out_of_range_rows, file = "processed_r_data/out_of_range_rows.Rdata")
 # /Evaluate
 #Fix
 #sfdata_in_valid_date_range$layer_2_concentration <-  0 # We can't do this - the ambient ring records into this variable
 sfdata_in_valid_date_range$layer_2_setpoint <-  0
 sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_without_wrong_date)
 
-# /Fix
-
-#write.csv(check2,'out_of_range_layer1_con.csv')
-##sfdata_with_NA <- merge(unconvertible_rows_with_NA,sfdata_without_wrong_date,all.y = TRUE)
-##sfdata_with_NA$flag <-  NULL
-
-
-
-sfdata_with_metadata_without_trunc <- add_sfdata_metadata(sfdata_in_valid_date_range)
-sfdata_fill_gaps <- find_gaps(sfdata_in_valid_date_range)
+sfdata_fill_gaps <- fill_gaps(sfdata_in_valid_date_range)
 #save(sfdata_fill_gaps, file = "processed_r_data/sfdata_fill_gaps.Rdata")
 
 sfdata_with_metadata <- add_sfdata_metadata(sfdata_fill_gaps) 
