@@ -271,7 +271,7 @@ convert_sfdata_variable_types <- function(my_sfdata){
   return(my_sfdata)
 }
 
-find_gaps <- function(my_sfdata){
+fill_gaps <- function(my_sfdata){
   #This function requires that the datetime be truncated to minutes. i.e. drop the seconds.
   if(FALSE){
     my_sfdata <- sfdata_in_valid_date_range
@@ -284,8 +284,8 @@ find_gaps <- function(my_sfdata){
   my_mins = seq(from = min(my_sfdata$datetime_trunc),  to = max(my_sfdata$datetime_trunc), by = 'min')
 
   all_mins <- data.frame(datetime_trunc = my_mins, ring_id = rep(unique(my_sfdata$ring_id), each = length(my_mins)))
-
-  sfdataday <- merge(my_sfdata, all_mins, by = c("ring_id",'datetime_trunc'), all.y= TRUE)
+  all_mins$year <- 2019
+  sfdataday <- merge(my_sfdata, all_mins, by = c("ring_id",'datetime_trunc','year'), all.y= TRUE)
 
   #return(original data frame with each minute as an empty row)
 }
