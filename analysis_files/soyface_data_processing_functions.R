@@ -126,6 +126,7 @@ check_sfdata_range <- function(my_df,my_range){
     my_range <-  valid_range
   }
   # End dummy data
+  my_df <- na.omit(my_df)
   out_of_range_row <- data.frame(cbind(my_df, type_flag = "text")) 
   out_of_range_row <- out_of_range_row[0,]
   
@@ -304,21 +305,6 @@ date_sub <- function(start_row_number,end_row_number,my_sfdata){
   
 }
 
-na_sub <- function(my_row,my_sfdata){
-  if(FALSE){
-    my_row <-  unconvertible_rows
-    my_sfdata <- sfdata_without_wrong_date
-  }
-
-  for(i in 1:nrow(my_row)){
-    
-    type <-  my_row[i,]$flag
-    my_row[i,][type] <- NA
-    
-  }
-  return(my_row)
-}
-
 out_of_range_sub <- function(flag,my_rows,my_sfdata){
  if(FALSE){
    my_row = out_of_range
@@ -351,14 +337,21 @@ fix_out_of_range <- function(my_csv,my_sfdata){
     my_sfdata <- sfdata_without_wrong_date
   }
   
-  ambian_subset <- my_sfdata[which(my_sfdata$ring_id == 16),]
-  
-  
+  ambient_subset <- my_sfdata[which(my_sfdata$ring_id == 16),]
+  ambient_subset$dt <-  as.Date(ambient_subset$dt,format="%m/%d/%Y") 
+  ambient_subset$time <- strptime(ambient_subset$time, "%H:%M")
+  my_csv <- na.omit(my_csv)
+  my_sfdata <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",my_sfdata)
   
   for(i in 1:nrow(my_csv)){
-    if(my_csv[i,]$replacement_value == "0 or ambiant"){
-      ambian_date_subset <-  ambian_subset[which(ambian_subset$df == my_csv[i,]),]
-      
+    if(((!is.na(my_csv[i,]$replacement_value == "0 or ambient"))&&(my_csv[i,]$replacement_value == "0 or ambient"))){
+      dt <-  as.Date(my_csv[i,]$dt,format="%m/%d/%Y") 
+      ambient_subset_i <-  ambient_subset[which(ambient_subset$dt == dt),]
+      time <- strptime(my_csv[i,]$time, "%H:%M")
+      ambient_subset_i <- ambient_subset_i[which(ambient_subset_i$time == time),]
+      temp_row_index <- my_csv[i,]$X
+      my_sfdata[temp_row_index,]$layer_1_concentration <- ambient_subset_i$layer_1_concentration
+      print(ambient_subset_i$layer_1_concentration)
       next 
     }
     
@@ -368,7 +361,8 @@ fix_out_of_range <- function(my_csv,my_sfdata){
   
   return(my_sfdata)
 }
-subset_by_date
+
+
 
 
 
