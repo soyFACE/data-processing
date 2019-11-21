@@ -17,3 +17,5 @@ year,variable,lower_limit,upper_limit,type
 2019,time,,,character
 2019,file_source,,,character
 2019,dt,1/1/2019,12/31/2019,character
+2019,datetime_trunc,,,character
+2019,datetime,,,character
