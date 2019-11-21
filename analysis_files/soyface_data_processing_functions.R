@@ -334,27 +334,40 @@ subset_by_date <- function(start_date,end_date,my_sfdata){
 fix_out_of_range <- function(my_csv,my_sfdata){
   if(FALSE){
     my_csv <- out_of_range_conentration
-    my_sfdata <- sfdata_without_wrong_date
+    my_sfdata <- sfdata_fill_gaps
   }
   
+  my_csv <- na.omit(my_csv)
   ambient_subset <- my_sfdata[which(my_sfdata$ring_id == 16),]
   ambient_subset$dt <-  as.Date(ambient_subset$dt,format="%m/%d/%Y") 
   ambient_subset$time <- strptime(ambient_subset$time, "%H:%M")
-  my_csv <- na.omit(my_csv)
-  my_sfdata <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",my_sfdata)
+
+  my_csv$datetime <- as.POSIXct(paste(my_csv$dt, my_csv$time)
+                                ,tz = 'GMT'
+                                ,format = "%m/%d/%Y %H:%M:%S")
   
-  for(i in 1:nrow(my_csv)){
-    if(((!is.na(my_csv[i,]$replacement_value == "0 or ambient"))&&(my_csv[i,]$replacement_value == "0 or ambient"))){
-      dt <-  as.Date(my_csv[i,]$dt,format="%m/%d/%Y") 
-      ambient_subset_i <-  ambient_subset[which(ambient_subset$dt == dt),]
-      time <- strptime(my_csv[i,]$time, "%H:%M")
-      ambient_subset_i <- ambient_subset_i[which(ambient_subset_i$time == time),]
-      temp_row_index <- my_csv[i,]$X
-      my_sfdata[temp_row_index,]$layer_1_concentration <- ambient_subset_i$layer_1_concentration
-      print(ambient_subset_i$layer_1_concentration)
-      next 
-    }
-    
+  my_csv$dt <- as.Date(my_csv$dt,format="%m/%d/%Y")
+  my_csv$time <- strptime(my_csv$time, "%H:%M")
+  my_csv <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",my_csv)
+
+  ## Deal with ambinet value
+  
+  
+  my_csv_char_replacement <- my_csv[!is.na(my_csv$replacement_value == "0 or ambient"),]
+  my_csv_need_ambient <-  my_csv_char_replacement[my_csv_char_replacement$replacement_value == "0 or ambient",]
+
+  
+  for(i in 1:nrow(my_csv_need_ambient)){
+    ambient_subset_i <-  ambient_subset[which(ambient_subset$dt == my_csv_need_ambient[i,]$dt),]
+    ambient_subset_i <- ambient_subset_i[which(ambient_subset_i$time == my_csv_need_ambient[i,]$time),]
+    temp_row_index <- my_csv_need_ambient[i,]$X
+    my_sfdata[temp_row_index,]$layer_1_concentration <- ambient_subset_i$layer_1_concentration
+  }
+  
+  ##Deal with other out of range
+  my_csv_other <-  my_csv[my_csv$replacement_value != "0 or ambient",]
+  for(i in 1:nrow(my_csv_other)){
+    print(my_csv[i,]$X)
     temp_row_index <- my_csv[i,]$X
     my_sfdata[temp_row_index,]$layer_1_concentration <- my_csv[i,]$replacement_value
   }

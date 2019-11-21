@@ -3,6 +3,7 @@ source("analysis_files/soyface_data_processing_functions.R")
 #############################Load data################################
 ######################################################################
 load("processed_r_data/sfdata.Rdata")
+load("processed_r_data/sfdata_fill_gaps.Rdata")
 
 valid_range <- read.csv("metadata/valid_ranges.csv"
                         ,stringsAsFactors = FALSE
@@ -35,31 +36,29 @@ fumigation_type <- read.csv("metadata/fumigation_type.csv"
 ######################################################################
 
 #sfdata <- raw_sfdata_avg_to_dataframe("\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\") ## Runing time 3.330841 mins
-#save(sfdata, file = "processed_r_data/sfdata.Rdata")
-# Evaluate
+#
 sfdata_without_empty <- sfdata[rowSums(is.na(sfdata)) != ncol(sfdata),] ##Delet empty row
-# /Evaluate
-# Fix
 sfdata_without_wrong_date <- date_sub(522055,522174,sfdata_without_empty)
-#save(sfdata_without_wrong_date, file = "processed_r_data/sfdata_without_wrong_date.Rdata")
-# /Fix
+
 # Evaluate
 unconvertible_rows <- check_sfdata_types(sfdata_without_wrong_date,valid_range) ## Serch for unconvertible datapoints (Runing time: 18.89308 secs)
 # /Evaluate
-# Fix
+
 sfdata_type_converted <- convert_sfdata_variable_types(sfdata_without_wrong_date)
 sfdata_in_valid_date_range <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",sfdata_type_converted)
-#save(sfdata_in_valid_date_range, file = "processed_r_data/sfdata_in_valid_date_range.Rdata")
-
-#sfdata_in_valid_date_range$layer_2_concentration <-  0 # We can't do this - the ambient ring records into this variable
-
 
 sfdata_fill_gaps <- fill_gaps(sfdata_in_valid_date_range)
 #save(sfdata_fill_gaps, file = "processed_r_data/sfdata_fill_gaps.Rdata")
 
-sfdata_in_valid_date_range$layer_2_setpoint <-  0
+sfdata_fill_gaps$layer_2_setpoint <-  0
 out_of_range_rows <- check_sfdata_range(sfdata_fill_gaps,valid_range)
+
+
+start = Sys.time()
 sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_without_wrong_date)
+end = Sys.time()
+
+end - start
 
 sfdata_with_metadata <- add_sfdata_metadata(sfdata_fill_gaps) 
 #save(sfdata_with_metadata, file = "processed_r_data/sfdata_with_metadata.Rdata")
