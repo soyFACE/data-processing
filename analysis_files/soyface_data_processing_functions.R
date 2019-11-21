@@ -331,14 +331,15 @@ subset_by_date <- function(start_date,end_date,my_sfdata){
 }
 
 
-fix_out_of_range <- function(my_csv,my_sfdata){
+fix_out_of_range <- function(my_csv,my_sfdata,ambient_ring_id){
   if(FALSE){
     my_csv <- out_of_range_conentration
     my_sfdata <- sfdata_fill_gaps
+    ambient_ring_id <- 16
   }
   
   my_csv <- na.omit(my_csv)
-  ambient_subset <- my_sfdata[which(my_sfdata$ring_id == 16),]
+  ambient_subset <- my_sfdata[which(my_sfdata$ring_id == ambient_ring_id),]
   ambient_subset$dt <-  as.Date(ambient_subset$dt,format="%m/%d/%Y") 
   ambient_subset$time <- strptime(ambient_subset$time, "%H:%M")
 
