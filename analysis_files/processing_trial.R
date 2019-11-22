@@ -9,9 +9,6 @@ valid_range <- read.csv("metadata/valid_ranges.csv"
                         ,stringsAsFactors = FALSE
                         ,colClasses = c('character'))
 
-out_of_range_conentration <- read.csv("out_of_range_layer1_concentration.csv"
-                                      ,stringsAsFactors = FALSE)
-
 ring_ids <- read.csv("metadata/ring_ids.csv"
                      ,stringsAsFactors = FALSE
                      ,colClasses = 'character'
@@ -54,8 +51,11 @@ sfdata_fill_gaps$layer_2_setpoint <-  0
 out_of_range_rows <- check_sfdata_range(sfdata_fill_gaps,valid_range)
 create_groupby_csv(out_of_range_rows)
 
+out_of_range_conentration <- read.csv("out_of_range_layer1_concentration.csv"
+                                      ,stringsAsFactors = FALSE)
+
 start = Sys.time()
-sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_without_wrong_date)
+sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_without_wrong_date, ambient_ring_id = 16)
 end = Sys.time()
 end - start
 

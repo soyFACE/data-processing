@@ -381,10 +381,11 @@ fix_out_of_range <- function(my_csv,my_sfdata,ambient_ring_id){
 
 
 create_groupby_csv <- function(my_rows){
+  # 2019-11-22 JAM. This should not have hard-coded columns or file names.
   if(FALSE){
     my_rows <- out_of_range_rows
   }
-  library(data.table)
+  require(data.table)
   out_of_range_rows_table <- data.table(my_rows)
   
   out_of_range_groupby_result <-  out_of_range_rows_table[, .N, by = .(Range_flag)] 
