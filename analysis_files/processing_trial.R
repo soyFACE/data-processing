@@ -49,13 +49,14 @@ sfdata_fill_gaps <- fill_gaps(sfdata_in_valid_date_range)
 
 sfdata_fill_gaps$layer_2_setpoint <-  0
 out_of_range_rows <- check_sfdata_range(sfdata_fill_gaps,valid_range)
-create_groupby_csv(out_of_range_rows)
+#create_groupby_csv(out_of_range_rows)
 
-out_of_range_conentration <- read.csv("out_of_range_layer1_concentration.csv"
-                                      ,stringsAsFactors = FALSE)
+out_of_range_conentration <- read.csv("out_of_range/out_of_range_layer_1_concentration.csv"
+                                      ,stringsAsFactors = FALSE
+                                      ,colClasses = 'character')
 
 start = Sys.time()
-sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_without_wrong_date, ambient_ring_id = 16)
+sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_fill_gaps, ambient_ring_id = 16)
 end = Sys.time()
 end - start
 

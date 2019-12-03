@@ -338,44 +338,56 @@ fix_out_of_range <- function(my_csv,my_sfdata,ambient_ring_id){
     ambient_ring_id <- 16
   }
   
-  my_csv <- na.omit(my_csv)
-  ambient_subset <- my_sfdata[which(my_sfdata$ring_id == ambient_ring_id),]
-  ambient_subset$dt <-  as.Date(ambient_subset$dt,format="%m/%d/%Y") 
-  ambient_subset$time <- strptime(ambient_subset$time, "%H:%M")
+  #my_csv <- na.omit(my_csv) # We need the rows with NAs
+  ambient_subset <- my_sfdata[my_sfdata$ring_id == ambient_ring_id,]
+  ambient_subset$ambient_value <- ambient_subset$layer_1_concentration
+  ambient_subset$layer_1_concentration <- NULL
+  #ambient_subset$dt <-  as.Date(ambient_subset$dt,format="%m/%d/%Y") 
+  #ambient_subset$time <- strptime(ambient_subset$time, "%H:%M")
 
-  my_csv$datetime <- as.POSIXct(paste(my_csv$dt, my_csv$time)
+  my_csv$datetime <- as.POSIXct(my_csv$datetime
                                 ,tz = 'GMT'
-                                ,format = "%m/%d/%Y %H:%M:%S")
+                                ,format = "%Y-%m-%d %H:%M:%S")
   
-  my_csv$dt <- as.Date(my_csv$dt,format="%m/%d/%Y")
-  my_csv$time <- strptime(my_csv$time, "%H:%M")
+  my_csv$datetime_trunc <- as.POSIXct(my_csv$datetime_trunc
+                                ,tz = 'GMT'
+                                ,format = "%Y-%m-%d %H:%M")
+  
+  #my_csv$dt <- as.Date(my_csv$dt,format="%m/%d/%Y")
+  #my_csv$time <- strptime(my_csv$time, "%H:%M")
   my_csv <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",my_csv)
 
   ## Deal with ambinet value
   
   
-  my_csv_char_replacement <- my_csv[!is.na(my_csv$replacement_value == "0 or ambient"),]
-  my_csv_need_ambient <-  my_csv_char_replacement[my_csv_char_replacement$replacement_value == "0 or ambient",]
-
+  #my_csv_char_replacement <- my_csv[my_csv$replacement_value != "0 or ambient",]
   
-  for(i in 1:nrow(my_csv_need_ambient)){
-    temp_dt <- my_csv_need_ambient[i,]$dt
-    temp_time <- my_csv_need_ambient[i,]$time
-    
-    ambient_subset_i <-  ambient_subset[which(ambient_subset$dt == temp_dt),]
-    ambient_subset_i <- ambient_subset_i[which(ambient_subset_i$time == temp_dt),]
-   
-    my_sfdata[which(my_sfdata$dt == temp_dt & my_sfdata$time == temp_time),]$layer_1_concentration <- ambient_subset_i$layer_1_concentration
-  }
+  my_csv_ambient_merged <- merge(my_csv, ambient_subset[,c("datetime_trunc","ambient_value")], all.x = TRUE, by = "datetime_trunc")
   
-  ##Deal with other out of range
-  my_csv_other <-  my_csv[my_csv$replacement_value != "0 or ambient",]
-  for(i in 1:nrow(my_csv_other)){
-    print(my_csv[i,]$X)
-    temp_row_index <- my_csv[i,]$X
-    my_sfdata[temp_row_index,]$layer_1_concentration <- my_csv[i,]$replacement_value
-  }
+  my_csv_ambient_merged$replacement_value <- ifelse((my_csv_ambient_merged$replacement_value == "0 or ambient" | my_csv_ambient_merged$replacement_value == "ambient") & !is.na(my_csv_ambient_merged$ambient_value)
+                                                                                                                       ,my_csv_ambient_merged$ambient_value
+                                                                                                                       ,my_csv_ambient_merged$replacement_value )
   
+  my_csv_ambient_merged$layer_1_concentration <- my_csv_ambient_merged$replacement_value
+  
+  # for(i in 1:nrow(my_csv_need_ambient)){
+  #   temp_dt <- my_csv_need_ambient[i,]$dt
+  #   temp_time <- my_csv_need_ambient[i,]$time
+  #   
+  #   ambient_subset_i <-  ambient_subset[which(ambient_subset$dt == temp_dt),]
+  #   ambient_subset_i <- ambient_subset_i[which(ambient_subset_i$time == temp_dt),]
+  #  
+  #   my_sfdata[which(my_sfdata$dt == temp_dt & my_sfdata$time == temp_time),]$layer_1_concentration <- ambient_subset_i$layer_1_concentration
+  # }
+  
+  # ##Deal with other out of range
+  # my_csv_other <-  my_csv[my_csv$replacement_value != "0 or ambient",]
+  # for(i in 1:nrow(my_csv_other)){
+  #   print(my_csv[i,]$X)
+  #   temp_row_index <- my_csv[i,]$X
+  #   my_sfdata[temp_row_index,]$layer_1_concentration <- my_csv[i,]$replacement_value
+  # }
+  # 
   return(my_sfdata)
 }
 
