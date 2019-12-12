@@ -232,14 +232,18 @@ read_sfdata_metadata <- function(){
 
 add_sfdata_metadata <- function(my_data){
   if(FALSE){
-    my_data = sfdata_fill_gaps
+    my_data = sfdata_7_without_out_of_range
   }
   # End dummy data
   sfdatat1 <- merge(my_data, ring_ids, by = c("ring_id","year"),all = TRUE) # JAM Need to add year when filling the gaps, otherwise this breaks.
   sfdatat2 <- merge(sfdatat1, projects, by = c("ring_number","year"),all = TRUE)
+  rm(sfdatat1)
   sfdatat3 <- merge(sfdatat2, start_dates, by = c("project","year"),all = TRUE)
+  rm(sfdatat2)
   sfdatat4 <- merge(sfdatat3, fumigation_type, by = c("ring_number","year"),all = TRUE)
+  rm(sfdatat3)
   sfdatat5 <- merge(sfdatat4, end_dates, by = c("fumigation_type","year"),all = TRUE)
+  rm(sfdatat4)
   return(sfdatat5)
 }
 

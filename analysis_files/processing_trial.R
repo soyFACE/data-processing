@@ -34,33 +34,38 @@ fumigation_type <- read.csv("metadata/fumigation_type.csv"
 
 #sfdata <- raw_sfdata_avg_to_dataframe("\\\\commons2.life.illinois.edu\\soyface_fumigation_data\\2019\\") ## Runing time 3.330841 mins
 #
-sfdata_without_empty <- sfdata[rowSums(is.na(sfdata)) != ncol(sfdata),] ##Delet empty row
-sfdata_without_wrong_date <- date_sub(522055,522174,sfdata_without_empty)
+
+sfdata_1_raw <- sfdata
+rm(sfdata)
+
+sfdata_2_without_empty <- sfdata_1_raw[rowSums(is.na(sfdata_1_raw)) != ncol(sfdata_1_raw),] ##Delet empty row
+sfdata_3_without_wrong_date <- date_sub(522055,522174,sfdata_2_without_empty)
 
 # Evaluate
-unconvertible_rows <- check_sfdata_types(sfdata_without_wrong_date,valid_range) ## Serch for unconvertible datapoints (Runing time: 18.89308 secs)
+unconvertible_rows <- check_sfdata_types(sfdata_3_without_wrong_date,valid_range) ## Serch for unconvertible datapoints (Runing time: 18.89308 secs)
 # /Evaluate
 
-sfdata_type_converted <- convert_sfdata_variable_types(sfdata_without_wrong_date)
-sfdata_in_valid_date_range <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",sfdata_type_converted)
+sfdata_4_type_converted <- convert_sfdata_variable_types(sfdata_3_without_wrong_date)
+sfdata_5_in_valid_date_range <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",sfdata_4_type_converted)
 
-sfdata_fill_gaps <- fill_gaps(sfdata_in_valid_date_range)
+sfdata_6_fill_gaps <- fill_gaps(sfdata_5_in_valid_date_range)
 #save(sfdata_fill_gaps, file = "processed_r_data/sfdata_fill_gaps.Rdata")
 
-sfdata_fill_gaps$layer_2_setpoint <-  0
-out_of_range_rows <- check_sfdata_range(sfdata_fill_gaps,valid_range)
+sfdata_6_fill_gaps$layer_2_setpoint <-  0
+out_of_range_rows <- check_sfdata_range(sfdata_6_fill_gaps,valid_range)
 #create_groupby_csv(out_of_range_rows)
 
 out_of_range_conentration <- read.csv("out_of_range/out_of_range_layer_1_concentration.csv"
                                       ,stringsAsFactors = FALSE
                                       ,colClasses = 'character')
 
-start = Sys.time()
-sfdata_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_fill_gaps, ambient_ring_id = 16)
-end = Sys.time()
-end - start
+# start = Sys.time() # 2019-12-12 JAM. Use system.time(expression) instead. Also there is a start() function and creating a variable "start" will break it.
 
-sfdata_with_metadata <- add_sfdata_metadata(sfdata_fill_gaps) 
+system.time(sfdata_7_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_6_fill_gaps, ambient_ring_id = 16))
+# end = Sys.time() # 2019-12-12 JAM There is an end() function.
+# end - start
+
+sfdata_8_with_metadata <- add_sfdata_metadata(sfdata_7_without_out_of_range) 
 #save(sfdata_with_metadata, file = "processed_r_data/sfdata_with_metadata.Rdata")
 
 
