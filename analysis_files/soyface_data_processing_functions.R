@@ -338,7 +338,7 @@ subset_by_date <- function(start_date,end_date,my_sfdata){
 fix_out_of_range <- function(my_csv,my_sfdata,ambient_ring_id){
   if(FALSE){
     my_csv <- out_of_range_fix
-    my_sfdata <- sfdata_fill_gaps
+    my_sfdata <- sfdata_6_fill_gaps
     ambient_ring_id <- 16
   }
   
@@ -364,8 +364,6 @@ fix_out_of_range <- function(my_csv,my_sfdata,ambient_ring_id){
   my_csv <- subset_by_date("2019-06-11,00:00:00","2019-09-25,23:59:59",my_csv)
 
   ## Deal with ambinet value
-  
-  
   #my_csv_char_replacement <- my_csv[my_csv$replacement_value != "0 or ambient",]
   
   my_csv_ambient_merged <- merge(my_csv, ambient_subset[,c("datetime_trunc",new_name)], all.x = TRUE, by = "datetime_trunc")
@@ -374,24 +372,31 @@ fix_out_of_range <- function(my_csv,my_sfdata,ambient_ring_id){
                                                                                                                        ,my_csv_ambient_merged$replacement_value )
   for(i in 1:nrow(my_csv_ambient_merged)){
     col_need_fix <-  my_csv_ambient_merged$Range_flag[i]
-    print(i)
-    if(my_csv_ambient_merged$replacement_value[i] == 99999 & !is.na(my_csv_ambient_merged$replacement_value[i])){
-      new_value <-  my_csv_ambient_merged[paste0(col_need_fix),"_new"][i]
-      my_csv_ambient_merged[i,col_need_fix] <-new_value
+    
+    if(my_csv_ambient_merged$replacement_value[i] == 99999 & !is.na(my_csv_ambient_merged[i,"replacement_value"])){
+      new_value <-  my_csv_ambient_merged[i,paste0(col_need_fix,"_new")]
+      my_csv_ambient_merged[i,col_need_fix] <- new_value
       #my_sfdata[my_sfdata$ring_id == my_csv_ambient_merged$ring_id[i] & my_sfdata$datetime_trunc == my_csv_ambient_merged$datetime_trunc[i],col_need_fix] <- new_value
-      
     }
     else{
       new_value <- my_csv_ambient_merged$replacement_value[i]
       my_csv_ambient_merged[i,col_need_fix] <-  new_value
       #my_sfdata[my_sfdata$ring_id == my_csv_ambient_merged$ring_id[i] & my_sfdata$datetime_trunc == my_csv_ambient_merged$datetime_trunc[i],col_need_fix] <- new_value
-      
     }
-  }    
+  }
   
-
-  #result <-  merge(my_sfdata, my_csv_ambient_merged[,c("ring_id","datetime_trunc",need_fix)], all.x = TRUE, by = c("ring_id","datetime_trunc"))
-
+  my_csv_ambient_merged
+  
+  result <-  merge(my_sfdata, my_csv_ambient_merged[,c("ring_id","datetime_trunc","Range_flag",need_fix)], all.x = TRUE, by = c("ring_id","datetime_trunc"))
+  result_out_of_range_before <- result[!is.na(result$Range_flag),]
+  need_fix_original <-  paste0(need_fix , ".x")
+  need_fix_replace <- paste0(need_fix , ".y")
+  result_out_of_range_before[,need_fix_original] <-  result_out_of_range_before[,need_fix_replace]
+  result_no_out_of_range <- result[is.na(result$Range_flag),]
+  
+  my_sfdata_fixed <- rbind(result_out_of_range_before,result_no_out_of_range)
+  my_sfdata_fixed[,need_fix_replace] = NULL
+  my_sfdata_fixed$Range_flag = NULL
   
   
   
@@ -415,7 +420,7 @@ fix_out_of_range <- function(my_csv,my_sfdata,ambient_ring_id){
   #   my_sfdata[temp_row_index,]$layer_1_concentration <- my_csv[i,]$replacement_value
   # }
   # 
-  return(my_sfdata)
+  return(my_sfdata_fixed)
 }
 
 

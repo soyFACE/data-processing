@@ -68,7 +68,7 @@ out_of_range_fix <- read.csv("out_of_range/out_of_range_all_variables.csv"
 
 # start = Sys.time() # 2019-12-12 JAM. Use system.time(expression) instead. Also there is a start() function and creating a variable "start" will break it.
 
-system.time(sfdata_7_without_out_of_range <- fix_out_of_range(out_of_range_conentration,sfdata_6_fill_gaps, ambient_ring_id = 16))
+system.time(sfdata_7_without_out_of_range <- fix_out_of_range(out_of_range_fix,sfdata_6_fill_gaps, ambient_ring_id = 16))
 # end = Sys.time() # 2019-12-12 JAM There is an end() function.
 # end - start
 
