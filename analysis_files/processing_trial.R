@@ -62,7 +62,7 @@ write.csv(out_of_range_rows, file = "out_of_range/out_of_range_all_variables.csv
           ,row.names = FALSE)
 #create_groupby_csv(out_of_range_rows)
 
-out_of_range_conentration <- read.csv("out_of_range/out_of_range_layer_1_concentration.csv"
+out_of_range_fix <- read.csv("out_of_range/out_of_range_all_variables.csv"
                                       ,stringsAsFactors = FALSE
                                       ,colClasses = 'character')
 

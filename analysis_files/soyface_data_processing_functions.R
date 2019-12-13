@@ -337,20 +337,22 @@ subset_by_date <- function(start_date,end_date,my_sfdata){
 
 fix_out_of_range <- function(my_csv,my_sfdata,ambient_ring_id){
   if(FALSE){
-    my_csv <- out_of_range_conentration
+    my_csv <- out_of_range_fix
     my_sfdata <- sfdata_fill_gaps
     ambient_ring_id <- 16
   }
   
   #my_csv <- na.omit(my_csv) # We need the rows with NAs
   ambient_subset <- my_sfdata[my_sfdata$ring_id == ambient_ring_id,]
-  ambient_subset$ambient_value <- ambient_subset$layer_1_concentration
-  ambient_subset$layer_1_concentration <- NULL
+  need_fix <- unique(my_csv$Range_flag)
+  new_name <- paste0(need_fix, "_new")
+  ambient_subset[,new_name] <- ambient_subset[,need_fix]
+  
   #ambient_subset$dt <-  as.Date(ambient_subset$dt,format="%m/%d/%Y") 
   #ambient_subset$time <- strptime(ambient_subset$time, "%H:%M")
 
-  my_csv$datetime <- as.POSIXct(my_csv$datetime
-                                ,tz = 'GMT'
+  my_csv$datetime <- as.POSIXct(my_csv$datetime_trunc
+                               ,tz = 'GMT'
                                 ,format = "%Y-%m-%d %H:%M:%S")
   
   my_csv$datetime_trunc <- as.POSIXct(my_csv$datetime_trunc
@@ -366,13 +368,34 @@ fix_out_of_range <- function(my_csv,my_sfdata,ambient_ring_id){
   
   #my_csv_char_replacement <- my_csv[my_csv$replacement_value != "0 or ambient",]
   
-  my_csv_ambient_merged <- merge(my_csv, ambient_subset[,c("datetime_trunc","ambient_value")], all.x = TRUE, by = "datetime_trunc")
-  
-  my_csv_ambient_merged$replacement_value <- ifelse((my_csv_ambient_merged$replacement_value == "0 or ambient" | my_csv_ambient_merged$replacement_value == "ambient") & !is.na(my_csv_ambient_merged$ambient_value)
-                                                                                                                       ,my_csv_ambient_merged$ambient_value
+  my_csv_ambient_merged <- merge(my_csv, ambient_subset[,c("datetime_trunc",new_name)], all.x = TRUE, by = "datetime_trunc")
+  my_csv_ambient_merged$replacement_value <- ifelse((my_csv_ambient_merged$replacement_value == "0 or ambient" | my_csv_ambient_merged$replacement_value == "ambient") 
+                                                                                                                       ,99999
                                                                                                                        ,my_csv_ambient_merged$replacement_value )
+  for(i in 1:nrow(my_csv_ambient_merged)){
+    col_need_fix <-  my_csv_ambient_merged$Range_flag[i]
+    print(i)
+    if(my_csv_ambient_merged$replacement_value[i] == 99999 & !is.na(my_csv_ambient_merged$replacement_value[i])){
+      new_value <-  my_csv_ambient_merged[paste0(col_need_fix),"_new"][i]
+      my_csv_ambient_merged[i,col_need_fix] <-new_value
+      #my_sfdata[my_sfdata$ring_id == my_csv_ambient_merged$ring_id[i] & my_sfdata$datetime_trunc == my_csv_ambient_merged$datetime_trunc[i],col_need_fix] <- new_value
+      
+    }
+    else{
+      new_value <- my_csv_ambient_merged$replacement_value[i]
+      my_csv_ambient_merged[i,col_need_fix] <-  new_value
+      #my_sfdata[my_sfdata$ring_id == my_csv_ambient_merged$ring_id[i] & my_sfdata$datetime_trunc == my_csv_ambient_merged$datetime_trunc[i],col_need_fix] <- new_value
+      
+    }
+  }    
   
-  my_csv_ambient_merged$layer_1_concentration <- my_csv_ambient_merged$replacement_value
+
+  #result <-  merge(my_sfdata, my_csv_ambient_merged[,c("ring_id","datetime_trunc",need_fix)], all.x = TRUE, by = c("ring_id","datetime_trunc"))
+
+  
+  
+  
+  #my_csv_ambient_merged$layer_1_concentration <- my_csv_ambient_merged$replacement_value
   
   # for(i in 1:nrow(my_csv_need_ambient)){
   #   temp_dt <- my_csv_need_ambient[i,]$dt
