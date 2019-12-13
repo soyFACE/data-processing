@@ -56,6 +56,8 @@ out_of_range_rows <- check_sfdata_range(sfdata_6_fill_gaps,valid_range)
 
 out_of_range_rows <- out_of_range_rows[order(out_of_range_rows$Range_flag,out_of_range_rows$ring_id,out_of_range_rows$dt),]
 
+out_of_range_rows$datetime_trunc <- paste("=\"",as.character(out_of_range_rows$datetime_trunc),"\"")
+
 write.csv(out_of_range_rows, file = "out_of_range/out_of_range_all_variables.csv"
           ,row.names = FALSE)
 #create_groupby_csv(out_of_range_rows)
