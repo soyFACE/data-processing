@@ -71,13 +71,65 @@ system.time(sfdata_7_without_out_of_range <- fix_out_of_range(out_of_range_conen
 sfdata_8_with_metadata <- add_sfdata_metadata(sfdata_7_without_out_of_range) 
 #save(sfdata_with_metadata, file = "processed_r_data/sfdata_with_metadata.Rdata")
 
+rm(sfdata_1_raw,sfdata_2_without_empty,sfdata_3_without_wrong_date,sfdata_4_type_converted,sfdata_5_in_valid_date_range,sfdata_6_fill_gaps,sfdata_7_without_out_of_range)
 
 ###################################################################################
+sfdata_ambient <- sfdata_8_with_metadata[sfdata_8_with_metadata$ring_number=="Ambient",]
 o3dataday <- sfdata_with_metadata[!sfdata_with_metadata$ring_id %in% c(0,1,2,3),]
 co2dataday <- sfdata_with_metadata[sfdata_with_metadata$ring_id %in% c(0,1,2,3),]
 
+sfdata_ambient <- sfdata_ambient[order(sfdata_ambient$ring_id,sfdata_ambient$datetime_trunc),]
 co2dataday_df <- co2dataday[order(co2dataday$ring_id,co2dataday$datetime_trunc),]
 o3dataday_df <- o3dataday[order(o3dataday$ring_id,o3dataday$datetime_trunc),]
+
+
+pdf("2019_ambient_daily_gaps_showns.pdf", height = 8.5, width = 11)
+by(sfdata_ambient, sfdata_ambient$dt, FUN = function(x){
+  by(x,x$ring_id, FUN = function(y){
+    plot(y$datetime_trunc, y$layer_2_concentration, type = 'b'
+         ,ylim = c(0,1000)
+         ,main = paste(unique(y$ring_number),unique(y$dt))
+         ,cex = .8
+    )
+    abline(h = 600, lty = 2)
+  })
+}
+)
+dev.off()
+
+
+
+
+pdf("2019_ambient_daily.pdf", height = 8.5, width = 11)
+
+by(sfdata_ambient, sfdata_ambient$dt, FUN = function(x){
+  
+  by(x,x$ring_id, FUN = function(y){
+    
+    plot(y$datetime, y$layer_2_concentration, type = 'b'
+         
+         ,ylim = c(0,1000)
+         
+         ,main = paste(unique(y$ring_number),unique(y$dt))
+         
+    )
+    points(y$datetime, y$wind_speed*100
+           
+           ,col = 'purple'
+           
+           ,pch = 10)
+
+    abline(h = 600, col = 'blue', lty = 2)
+    
+    abline(h = c(480,720), col = 'blue', lty = 4)
+    
+  })
+  
+}
+
+)
+dev.off()
+
 
 pdf("2019_Co2_Rings_daily.pdf", height = 8.5, width = 11)
 
